@@ -1,4 +1,4 @@
-#!/usr/bin/env hydra
+#!/usr/bin/env hydra-dragonfire
 local address, name, password = unpack(arg)
 local client = hydra.client(address)
 

@@ -2,7 +2,7 @@ package main
 
 import (
 	_ "embed"
-	"github.com/dragonfireclient/hydra/tolua"
+	"github.com/dragonfireclient/hydra-dragonfire/tolua"
 	"github.com/yuin/gopher-lua"
 	"os"
 	"os/signal"

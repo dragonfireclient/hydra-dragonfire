@@ -3,7 +3,7 @@ package main
 import (
 	"errors"
 	"github.com/anon55555/mt"
-	"github.com/dragonfireclient/hydra/tolua"
+	"github.com/dragonfireclient/hydra-dragonfire/tolua"
 	"github.com/yuin/gopher-lua"
 	"net"
 	"sync"
