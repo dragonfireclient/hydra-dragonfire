@@ -2,7 +2,8 @@ package main
 
 import (
 	_ "embed"
-	"github.com/Shopify/go-lua"
+	"github.com/dragonfireclient/hydra/tolua"
+	"github.com/yuin/gopher-lua"
 	"os"
 	"os/signal"
 	"syscall"
@@ -15,21 +16,48 @@ var canceled = false
 //go:embed builtin/vector.lua
 var vectorLibrary string
 
-func l_dtime(l *lua.State) int {
-	l.PushNumber(time.Since(lastTime).Seconds())
-	lastTime = time.Now()
-	return 1
-}
-
-func l_canceled(l *lua.State) int {
-	l.PushBoolean(canceled)
-	return 1
+var hydraFuncs = map[string]lua.LGFunction{
+	"client":     l_client,
+	"dtime":      l_dtime,
+	"canceled":   l_canceled,
+	"poll":       l_poll,
+	"disconnect": l_disconnect,
 }
 
 func signalChannel() chan os.Signal {
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, os.Interrupt, syscall.SIGTERM, syscall.SIGHUP)
 	return sig
+}
+
+func l_dtime(l *lua.LState) int {
+	l.Push(lua.LNumber(time.Since(lastTime).Seconds()))
+	return 1
+}
+
+func l_canceled(l *lua.LState) int {
+	l.Push(lua.LBool(canceled))
+	return 1
+}
+
+func l_poll(l *lua.LState) int {
+	client, pkt, timeout := doPoll(l, getClients(l))
+	if client == nil {
+		l.Push(lua.LNil)
+	} else {
+		l.Push(client.userdata)
+	}
+	l.Push(tolua.Pkt(l, pkt))
+	l.Push(lua.LBool(timeout))
+	return 3
+}
+
+func l_disconnect(l *lua.LState) int {
+	for _, client := range getClients(l) {
+		client.disconnect()
+	}
+
+	return 0
 }
 
 func main() {
@@ -42,33 +70,27 @@ func main() {
 		canceled = true
 	}()
 
-	l := lua.NewState()
-	lua.OpenLibraries(l)
+	l := lua.NewState(lua.Options{IncludeGoStackTrace: true})
+	defer l.Close()
 
-	lua.NewLibrary(l, []lua.RegistryFunction{
-		{Name: "client", Function: l_client},
-		{Name: "dtime", Function: l_dtime},
-		{Name: "canceled", Function: l_canceled},
-		{Name: "poll", Function: l_poll},
-	})
-
-	l.PushNumber(10.0)
-	l.SetField(-2, "BS")
-
-	l.SetGlobal("hydra")
-
-	l.NewTable()
-	for i, arg := range os.Args {
-		l.PushString(arg)
-		l.RawSetInt(-2, i - 1)
+	arg := l.NewTable()
+	for i, a := range os.Args {
+		l.RawSetInt(arg, i-1, lua.LString(a))
 	}
-	l.SetGlobal("arg")
+	l.SetGlobal("arg", arg)
 
-	if err := lua.DoString(l, vectorLibrary); err != nil {
+	hydra := l.SetFuncs(l.NewTable(), hydraFuncs)
+	l.SetField(hydra, "BS", lua.LNumber(10.0))
+	l.SetGlobal("hydra", hydra)
+
+	l.SetField(l.NewTypeMetatable("hydra.auth"), "__index", l.SetFuncs(l.NewTable(), authFuncs))
+	l.SetField(l.NewTypeMetatable("hydra.client"), "__index", l.NewFunction(l_client_index))
+
+	if err := l.DoString(vectorLibrary); err != nil {
 		panic(err)
 	}
 
-	if err := lua.DoFile(l, os.Args[1]); err != nil {
+	if err := l.DoFile(os.Args[1]); err != nil {
 		panic(err)
 	}
 }

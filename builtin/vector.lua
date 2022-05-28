@@ -1,7 +1,7 @@
 --[[ builtin/vector.lua ]]--
 
 local function wrap(op, body_wrapper, ...)
-	return load("return function(a, b) " .. body_wrapper(op, ...) .. "end")()
+	return loadstring("return function(a, b) " .. body_wrapper(op, ...) .. "end")()
 end
 
 local function arith_mt(...)

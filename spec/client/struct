@@ -1,7 +1,7 @@
 node
-	integer param0
-	integer param1
-	integer param2
+	number param0
+	number param1
+	number param2
 tile_anim
 	anim_type type
 	vec2 aspect_ratio
@@ -13,12 +13,12 @@ hud
 	string name
 	vec2 scale
 	string text
-	integer number
-	integer item
-	integer dir
+	number number
+	number item
+	number dir
 	vec2 align
 	vec2 offset
 	vec3 world_pos
 	vec2 size
-	integer z_index
+	number z_index
 	string text_2

@@ -1,7 +1,7 @@
 hello
-	integer serialize_ver
-	integer compression
-	integer proto_ver
+	number serialize_ver
+	number compression
+	number proto_ver
 	auth_methods auth_methods
 	string username
 accept_auth
@@ -14,9 +14,9 @@ accept_sudo_mode
 deny_sudo_mode
 kick
 	kick_reason reason
-	[custom] dr := val.Reason; dr == mt.Custom || dr == mt.Shutdown || dr == mt.Crash
+	[custom] val.Reason == mt.Custom || val.Reason == mt.Shutdown || val.Reason == mt.Crash
 	string custom
-	[reconnect] dr := val.Reason; dr == mt.Shutdown || dr == mt.Crash
+	[reconnect] val.Reason == mt.Shutdown || val.Reason == mt.Crash
 	boolean reconnect
 blk_data
 	vec3 blkpos
@@ -30,11 +30,11 @@ remove_node
 inv
 	string inv
 time_of_day
-	integer time
+	number time
 	number speed
 csm_restriction_flags
 	csm_restriction_flags flags
-	integer map_range
+	number map_range
 add_player_vel
 	vec3 vel
 media_push
@@ -53,7 +53,7 @@ ao_rm_add
 ao_msgs
 	# TODO
 hp
-	integer hp
+	number hp
 move_player
 	vec3 pos
 	number pitch
@@ -76,18 +76,18 @@ announce_media
 item_defs
 	# TODO
 play_sound
-	integer id
+	number id
 	string name
 	number gain
 	sound_src_type src_type
 	vec3 pos
-	integer src_aoid
+	number src_aoid
 	boolean loop
 	number fade
 	number pitch
 	boolean ephemeral
 stop_sound
-	integer id
+	number id
 privs
 	string_set privs
 inv_formspec
@@ -95,7 +95,7 @@ inv_formspec
 detached_inv
 	string name
 	boolean keep
-	integer len
+	number len
 	string inv
 show_formspec
 	string formspec
@@ -124,13 +124,13 @@ spawn_particle
 	boolean vertical
 	boolean collision_rm
 	tile_anim anim_params
-	integer glow
+	number glow
 	boolean ao_collision
-	integer node_param0
-	integer node_param2
-	integer node_tile
+	number node_param0
+	number node_param2
+	number node_tile
 add_particle_spawner
-	integer amount
+	number amount
 	number duration
 	box3 pos
 	box3 vel
@@ -139,22 +139,22 @@ add_particle_spawner
 	box1 size
 	boolean collide
 	string texture
-	integer id
+	number id
 	boolean vertical
 	boolean collision_rm
 	tile_anim anim_params
-	integer glow
+	number glow
 	boolean ao_collision
-	integer node_param0
-	integer node_param2
-	integer node_tile
+	number node_param0
+	number node_param2
+	number node_tile
 add_hud
-	integer id
+	number id
 	hud hud
 rm_hud
-	integer id
+	number id
 change_hud
-	integer id
+	number id
 	hud_field field
 	[pos] val.Field == mt.HUDPos
 	[name] val.Field == mt.HUDName
@@ -171,24 +171,24 @@ change_hud
 	vec2 pos
 	string name
 	string text
-	integer number
-	integer item
-	integer dir
+	number number
+	number item
+	number dir
 	vec2 align
 	vec2 offset
 	vec3 world_pos
 	vec2 size
-	integer z_index
+	number z_index
 	string text_2
 hud_flags
 	hud_flags flags
 	hud_flags mask
 set_hotbar_param
 	hotbar_param param
-	integer size
+	number size
 	string img
 breath
-	integer breath
+	number breath
 sky_params
 	color bg_color
 	string type
@@ -214,7 +214,7 @@ sky_params
 	color indoor
 override_day_night_ratio
 	boolean override
-	integer ratio
+	number ratio
 local_player_anim
 	box1 idle
 	box1 walk
@@ -225,7 +225,7 @@ eye_offset
 	vec3 first
 	vec3 third
 del_particle_spawner
-	integer id
+	number id
 cloud_params
 	number density
 	color diffuse_color
@@ -234,7 +234,7 @@ cloud_params
 	number thickness
 	vec2 speed
 fade_sound
-	integer id
+	number id
 	number step
 	number gain
 update_player_list
@@ -263,7 +263,7 @@ moon_params
 	number size
 star_params
 	boolean visible
-	integer count
+	number count
 	color color
 	number size
 srp_bytes_salt_b
