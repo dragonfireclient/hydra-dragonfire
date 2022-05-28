@@ -1,0 +1,276 @@
+hello
+	integer serialize_ver
+	integer compression
+	integer proto_ver
+	auth_methods auth_methods
+	string username
+accept_auth
+	vec3 player_pos
+	# int64
+	number map_seed
+	number send_interval
+	auth_methods sudo_auth_methods
+accept_sudo_mode
+deny_sudo_mode
+kick
+	kick_reason reason
+	[custom] dr := val.Reason; dr == mt.Custom || dr == mt.Shutdown || dr == mt.Crash
+	string custom
+	[reconnect] dr := val.Reason; dr == mt.Shutdown || dr == mt.Crash
+	boolean reconnect
+blk_data
+	vec3 blkpos
+	# TODO
+add_node
+	vec3 pos
+	node node
+	boolean keep_meta
+remove_node
+	vec3 pos
+inv
+	string inv
+time_of_day
+	integer time
+	number speed
+csm_restriction_flags
+	csm_restriction_flags flags
+	integer map_range
+add_player_vel
+	vec3 vel
+media_push
+	fixed_string sha1
+	string filename
+	boolean should_cache
+	string data
+chat_msg
+	chat_msg_type type
+	string sender
+	string text
+	# int64
+	number timestamp
+ao_rm_add
+	# TODO
+ao_msgs
+	# TODO
+hp
+	integer hp
+move_player
+	vec3 pos
+	number pitch
+	number yaw
+legacy_kick
+	string reason
+fov
+	number fov
+	boolean multiplier
+	number transition_time
+death_screen
+	boolean point_cam
+	vec3 point_at
+media
+	# TODO
+node_defs
+	# TODO
+announce_media
+	# TODO
+item_defs
+	# TODO
+play_sound
+	integer id
+	string name
+	number gain
+	sound_src_type src_type
+	vec3 pos
+	integer src_aoid
+	boolean loop
+	number fade
+	number pitch
+	boolean ephemeral
+stop_sound
+	integer id
+privs
+	string_set privs
+inv_formspec
+	string formspec
+detached_inv
+	string name
+	boolean keep
+	integer len
+	string inv
+show_formspec
+	string formspec
+	string formname
+movement
+	number default_accel
+	number air_accel
+	number fast_accel
+	number walk_speed
+	number crouch_speed
+	number fast_speed
+	number climb_speed
+	number jump_speed
+	number fluidity
+	number smoothing
+	number sink
+	number gravity
+spawn_particle
+	vec3 pos
+	vec3 vel
+	vec3 acc
+	number expiration_time
+	number size
+	boolean collide
+	string texture
+	boolean vertical
+	boolean collision_rm
+	tile_anim anim_params
+	integer glow
+	boolean ao_collision
+	integer node_param0
+	integer node_param2
+	integer node_tile
+add_particle_spawner
+	integer amount
+	number duration
+	box3 pos
+	box3 vel
+	box3 acc
+	box1 expiration_time
+	box1 size
+	boolean collide
+	string texture
+	integer id
+	boolean vertical
+	boolean collision_rm
+	tile_anim anim_params
+	integer glow
+	boolean ao_collision
+	integer node_param0
+	integer node_param2
+	integer node_tile
+add_hud
+	integer id
+	hud hud
+rm_hud
+	integer id
+change_hud
+	integer id
+	hud_field field
+	[pos] val.Field == mt.HUDPos
+	[name] val.Field == mt.HUDName
+	[text] val.Field == mt.HUDText
+	[number] val.Field == mt.HUDNumber
+	[item] val.Field == mt.HUDItem
+	[dir] val.Field == mt.HUDDir
+	[align] val.Field == mt.HUDAlign
+	[offset] val.Field == mt.HUDOffset
+	[world_pos] val.Field == mt.HUDWorldPos
+	[size] val.Field == mt.HUDSize
+	[z_index] val.Field == mt.HUDZIndex
+	[text_2] val.Field == mt.HUDText2
+	vec2 pos
+	string name
+	string text
+	integer number
+	integer item
+	integer dir
+	vec2 align
+	vec2 offset
+	vec3 world_pos
+	vec2 size
+	integer z_index
+	string text_2
+hud_flags
+	hud_flags flags
+	hud_flags mask
+set_hotbar_param
+	hotbar_param param
+	integer size
+	string img
+breath
+	integer breath
+sky_params
+	color bg_color
+	string type
+	boolean clouds
+	color sun_fog_tint
+	color moon_fog_tint
+	string fog_tint_type
+	[textures] val.Type == "skybox"
+	texture_list textures
+	[day_sky] val.Type == "regular"
+	[day_horizon] val.Type == "regular"
+	[dawn_sky] val.Type == "regular"
+	[dawn_horizon] val.Type == "regular"
+	[night_sky] val.Type == "regular"
+	[night_horizon] val.Type == "regular"
+	[indoor] val.Type == "regular"
+	color day_sky
+	color day_horizon
+	color dawn_sky
+	color dawn_horizon
+	color night_sky
+	color night_horizon
+	color indoor
+override_day_night_ratio
+	boolean override
+	integer ratio
+local_player_anim
+	box1 idle
+	box1 walk
+	box1 dig
+	box1 walk_dig
+	number speed
+eye_offset
+	vec3 first
+	vec3 third
+del_particle_spawner
+	integer id
+cloud_params
+	number density
+	color diffuse_color
+	color ambient_color
+	number height
+	number thickness
+	vec2 speed
+fade_sound
+	integer id
+	number step
+	number gain
+update_player_list
+	player_list_update_type type
+	string_list players
+mod_chan_msg
+	string channel
+	string sender
+	string msg
+mod_chan_sig
+	mod_chan_sig signal
+	string channel
+node_metas_changed
+	# TODO
+sun_params
+	boolean visible
+	string texture
+	string tone_map
+	string rise
+	boolean rising
+	number size
+moon_params
+	boolean visible
+	string texture
+	string tone_map
+	number size
+star_params
+	boolean visible
+	integer count
+	color color
+	number size
+srp_bytes_salt_b
+	string salt
+	string b
+formspec_prepend
+	string prepend
+minimap_modes
+	# TODO
+disco

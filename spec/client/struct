@@ -1,0 +1,24 @@
+node
+	integer param0
+	integer param1
+	integer param2
+tile_anim
+	anim_type type
+	vec2 aspect_ratio
+	vec2 n_frames
+	number duration
+hud
+	hud_type type
+	vec2 pos
+	string name
+	vec2 scale
+	string text
+	integer number
+	integer item
+	integer dir
+	vec2 align
+	vec2 offset
+	vec3 world_pos
+	vec2 size
+	integer z_index
+	string text_2

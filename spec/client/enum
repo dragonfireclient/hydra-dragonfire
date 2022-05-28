@@ -1,0 +1,70 @@
+kick_reason
+	wrong_passwd
+	unexpected_data
+	srv_is_singleplayer
+	unsupported_ver
+	bad_name_chars
+	bad_name
+	too_many_clts
+	empty_passwd
+	already_connected
+	srv_err
+	custom
+	shutdown
+	crash
+chat_msg_type
+	postfix Msg
+	raw
+	normal
+	announce
+	sys
+sound_src_type
+	postfix Src
+	no
+	pos
+	ao
+anim_type
+	postfix Anim
+	no
+	vertical_frame
+	sprite_sheet
+hud_type
+	postfix HUD
+	img
+	text
+	statbar
+	inv
+	waypoint
+	img_waypoint
+hud_field
+	prefix HUD
+	pos
+	name
+	scale
+	text
+	number
+	item
+	dir
+	align
+	offset
+	world_pos
+	size
+	z_index
+	text_2
+hotbar_param
+	prefix Hotbar
+	size
+	img
+	sel_img
+mod_chan_sig
+	join_ok
+	join_fail
+	leave_ok
+	leave_fail
+	not_registered
+	set_state
+player_list_update_type
+	postfix Players
+	init
+	add
+	remove

@@ -1,0 +1,19 @@
+auth_methods
+	legacy_passwd
+	srp
+	first_srp
+csm_restriction_flags
+	no_csms
+	no_chat_msgs
+	no_node_defs
+	limit_map_range
+	no_player_list
+hud_flags
+	prefix Show
+	hotbar
+	health_bar
+	crosshair
+	wielded_item
+	breath_bar
+	minimap
+	radar_minimap
