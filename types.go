@@ -6,6 +6,8 @@ import (
 	"image/color"
 )
 
+//go:generate ./mkconvert.lua
+
 func luaPushVec2(l *lua.State, val [2]float64) {
 	l.Global("vec2")
 	l.PushNumber(val[0])
