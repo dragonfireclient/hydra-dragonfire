@@ -180,8 +180,7 @@ func (auth *Auth) handle(pkt *mt.Pkt, l *lua.State, idx int) {
 			Patch:    0,
 			Reserved: 0,
 			Formspec: 4,
-			// Version:  "hydra-dragonfire",
-			Version: "astolfo",
+			Version:  "hydra-dragonfire",
 		})
 		auth.state = asActive
 	}
