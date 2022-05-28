@@ -1,4 +1,37 @@
 #!/usr/bin/env lua
+local function snext(t, state)
+	local key
+
+	if state == nil then
+		t.__sorted = {}
+		for k in pairs(t) do
+			if k ~= "__sorted" then
+				table.insert(t.__sorted, k)
+			end
+		end
+		table.sort(t.__sorted)
+		
+		key = t.__sorted[1]
+	else
+		for i, v in ipairs(t.__sorted) do
+			if v == state then
+				key = t.__sorted[i + 1]
+				break
+			end
+		end
+	end
+
+	if key then
+		return key, t[key]
+	end
+
+	t.__sorted = nil
+end
+
+local function spairs(t)
+	return snext, t, nil
+end
+
 local function parse_pair(pair, value_first)
 	if pair:sub(1, 1) == "#" then
 		return
@@ -73,7 +106,7 @@ end
 
 local funcs = ""
 
-for name, fields in pairs(parse_spec("client/enum")) do
+for name, fields in spairs(parse_spec("client/enum")) do
 	local camel = camel_case(name)
 	funcs = funcs .. "func luaPush" .. camel .. "(l *lua.State, val mt." .. camel .. ") {\n\tswitch val {\n"
 
@@ -86,7 +119,7 @@ for name, fields in pairs(parse_spec("client/enum")) do
 	funcs = funcs .. "\t}\n}\n\n"
 end
 
-for name, fields in pairs(parse_spec("client/flag")) do
+for name, fields in spairs(parse_spec("client/flag")) do
 	local camel = camel_case(name)
 	funcs = funcs .. "func luaPush" .. camel .. "(l *lua.State, val mt." .. camel .. ") {\n\tl.NewTable()\n"
 
@@ -115,7 +148,7 @@ local push_type = {
 local function push_fields(fields, indent)
 	local impl = ""
 	
-	for name, type in pairs(fields) do
+	for name, type in spairs(fields) do
 		if name:sub(1, 1) ~= "[" then
 			local camel = "val." .. camel_case(name)
 
@@ -144,7 +177,7 @@ local function push_fields(fields, indent)
 	return impl
 end
 
-for name, fields in pairs(parse_spec("client/struct", true)) do
+for name, fields in spairs(parse_spec("client/struct", true)) do
 	local camel = camel_case(name)
 	funcs = funcs
 		.. "func luaPush" .. camel .. "(l *lua.State, val mt." .. camel .. ") {\n\tl.NewTable()\n"
@@ -155,7 +188,7 @@ end
 local to_string_impl = ""
 local to_lua_impl = ""
 
-for name, fields in pairs(parse_spec("client/pkt", true)) do
+for name, fields in spairs(parse_spec("client/pkt", true)) do
 	local case = "\tcase *mt.ToClt" .. camel_case(name) .. ":\n"
 
 	to_string_impl = to_string_impl
