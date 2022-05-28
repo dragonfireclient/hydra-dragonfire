@@ -13,8 +13,20 @@ import (
 var lastTime = time.Now()
 var canceled = false
 
+//go:embed builtin/luax/init.lua
+var builtinLuaX string
+
 //go:embed builtin/vector.lua
-var vectorLibrary string
+var builtinVector string
+
+//go:embed builtin/escapes.lua
+var builtinEscapes string
+
+var builtinFiles = []string{
+	builtinLuaX,
+	builtinVector,
+	builtinEscapes,
+}
 
 var hydraFuncs = map[string]lua.LGFunction{
 	"client":     l_client,
@@ -86,8 +98,10 @@ func main() {
 	l.SetField(l.NewTypeMetatable("hydra.auth"), "__index", l.SetFuncs(l.NewTable(), authFuncs))
 	l.SetField(l.NewTypeMetatable("hydra.client"), "__index", l.NewFunction(l_client_index))
 
-	if err := l.DoString(vectorLibrary); err != nil {
-		panic(err)
+	for _, str := range builtinFiles {
+		if err := l.DoString(str); err != nil {
+			panic(err)
+		}
 	}
 
 	if err := l.DoFile(os.Args[1]); err != nil {
