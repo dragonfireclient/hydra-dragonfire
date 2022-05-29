@@ -28,7 +28,7 @@ Poll will return early if the script is interrupted by a signal, one of the sele
 
 Additionally, different native components can be enabled per-client to manage state.
 Currently only the `auth` component is available, but components like `map`, `objs`, `inv`, `pos`, `playerlist` etc. will be added in the future.
-Components handle packets asynchronously, they will process 
+Components handle packets asynchronously, they will process them even if poll is not called.
 
 # Documentation
 For available packets, see `spec/client` and `spec/server`.
