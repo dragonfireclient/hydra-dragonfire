@@ -46,7 +46,7 @@ func readPointedThing(l *lua.LState, val lua.LValue, ptr *mt.PointedThing) {
 	}
 	id := l.GetField(val, "id")
 
-	if id == lua.LNil {
+	if id != lua.LNil {
 		pt := &mt.PointedAO{}
 		readAOID(l, id, &(*pt).ID)
 		*ptr = pt
