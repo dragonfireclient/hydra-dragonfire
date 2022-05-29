@@ -1,4 +1,5 @@
 --[[ builtin/client.lua ]]--
+
 function package.loaded.client()
 	local address, name, password = unpack(arg)
 	local client = hydra.client(address)

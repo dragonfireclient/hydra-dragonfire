@@ -3,8 +3,7 @@ package main
 import (
 	"errors"
 	"github.com/anon55555/mt"
-	"github.com/dragonfireclient/hydra-dragonfire/fromlua"
-	"github.com/dragonfireclient/hydra-dragonfire/tolua"
+	"github.com/dragonfireclient/hydra-dragonfire/convert"
 	"github.com/yuin/gopher-lua"
 	"net"
 	"sync"
@@ -20,7 +19,7 @@ const (
 
 type Component interface {
 	create(client *Client, l *lua.LState)
-	tolua() lua.LValue
+	push() lua.LValue
 	connect()
 	process(pkt *mt.Pkt)
 }
@@ -109,7 +108,7 @@ func l_client_index(l *lua.LState) int {
 	if fun, exists := clientFuncs[key]; exists {
 		l.Push(l.NewFunction(fun))
 	} else if component, exists := client.components[key]; exists {
-		l.Push(component.tolua())
+		l.Push(component.push())
 	} else {
 		l.Push(lua.LNil)
 	}
@@ -168,7 +167,7 @@ func l_client_connect(l *lua.LState) int {
 					component.process(&pkt)
 				}
 
-				if _, exists := client.subscribed[string(tolua.PktType(&pkt))]; exists || client.wildcard {
+				if _, exists := client.subscribed[string(convert.PushPktType(&pkt))]; exists || client.wildcard {
 					client.queue <- &pkt
 				}
 
@@ -193,7 +192,7 @@ func l_client_poll(l *lua.LState) int {
 	client := getClient(l)
 	_, pkt, timeout := doPoll(l, []*Client{client})
 
-	l.Push(tolua.Pkt(l, pkt))
+	l.Push(convert.PushPkt(l, pkt))
 	l.Push(lua.LBool(timeout))
 	return 2
 }
@@ -258,7 +257,7 @@ func l_client_wildcard(l *lua.LState) int {
 
 func l_client_send(l *lua.LState) int {
 	client := getClient(l)
-	cmd := fromlua.Cmd(l)
+	cmd := convert.ReadCmd(l)
 	doAck := l.ToBool(4)
 
 	client.mu.Lock()

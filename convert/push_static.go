@@ -1,4 +1,4 @@
-package tolua
+package convert
 
 import (
 	"github.com/anon55555/mt"
@@ -6,16 +6,16 @@ import (
 	"image/color"
 )
 
-//go:generate ./generate.lua
+//go:generate ./push_mkauto.lua
 
-func pushVec2(l *lua.LState, val [2]lua.LNumber) {
+func vec2(l *lua.LState, val [2]lua.LNumber) {
 	l.Push(l.GetGlobal("vec2"))
 	l.Push(val[0])
 	l.Push(val[1])
 	l.Call(2, 1)
 }
 
-func pushVec3(l *lua.LState, val [3]lua.LNumber) {
+func vec3(l *lua.LState, val [3]lua.LNumber) {
 	l.Push(l.GetGlobal("vec3"))
 	l.Push(val[0])
 	l.Push(val[1])
@@ -29,17 +29,17 @@ func popValue(l *lua.LState) lua.LValue {
 	return ret
 }
 
-func Vec2(l *lua.LState, val [2]lua.LNumber) lua.LValue {
-	pushVec2(l, val)
+func pushVec2(l *lua.LState, val [2]lua.LNumber) lua.LValue {
+	vec2(l, val)
 	return popValue(l)
 }
 
-func Vec3(l *lua.LState, val [3]lua.LNumber) lua.LValue {
-	pushVec3(l, val)
+func pushVec3(l *lua.LState, val [3]lua.LNumber) lua.LValue {
+	vec3(l, val)
 	return popValue(l)
 }
 
-func Box1(l *lua.LState, val [2]lua.LNumber) lua.LValue {
+func pushBox1(l *lua.LState, val [2]lua.LNumber) lua.LValue {
 	l.Push(l.GetGlobal("box"))
 	l.Push(val[0])
 	l.Push(val[1])
@@ -47,23 +47,23 @@ func Box1(l *lua.LState, val [2]lua.LNumber) lua.LValue {
 	return popValue(l)
 }
 
-func Box2(l *lua.LState, val [2][2]lua.LNumber) lua.LValue {
+func pushBox2(l *lua.LState, val [2][2]lua.LNumber) lua.LValue {
 	l.Push(l.GetGlobal("box"))
-	pushVec2(l, val[0])
-	pushVec2(l, val[1])
+	vec2(l, val[0])
+	vec2(l, val[1])
 	l.Call(2, 1)
 	return popValue(l)
 }
 
-func Box3(l *lua.LState, val [2][3]lua.LNumber) lua.LValue {
+func pushBox3(l *lua.LState, val [2][3]lua.LNumber) lua.LValue {
 	l.Push(l.GetGlobal("box"))
-	pushVec3(l, val[0])
-	pushVec3(l, val[1])
+	vec3(l, val[0])
+	vec3(l, val[1])
 	l.Call(2, 1)
 	return popValue(l)
 }
 
-func Color(l *lua.LState, val color.NRGBA) lua.LValue {
+func pushColor(l *lua.LState, val color.NRGBA) lua.LValue {
 	tbl := l.NewTable()
 	l.SetField(tbl, "r", lua.LNumber(val.R))
 	l.SetField(tbl, "g", lua.LNumber(val.G))
@@ -72,7 +72,7 @@ func Color(l *lua.LState, val color.NRGBA) lua.LValue {
 	return tbl
 }
 
-func StringSet(l *lua.LState, val []string) lua.LValue {
+func pushStringSet(l *lua.LState, val []string) lua.LValue {
 	tbl := l.NewTable()
 	for _, str := range val {
 		l.SetField(tbl, str, lua.LTrue)
@@ -88,10 +88,10 @@ func stringList[T ~string](l *lua.LState, val []T) lua.LValue {
 	return tbl
 }
 
-func StringList(l *lua.LState, val []string) lua.LValue {
+func pushStringList(l *lua.LState, val []string) lua.LValue {
 	return stringList[string](l, val)
 }
 
-func TextureList(l *lua.LState, val []mt.Texture) lua.LValue {
+func pushTextureList(l *lua.LState, val []mt.Texture) lua.LValue {
 	return stringList[mt.Texture](l, val)
 }

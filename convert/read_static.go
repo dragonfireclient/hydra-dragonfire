@@ -1,11 +1,11 @@
-package fromlua
+package convert
 
 import (
 	"github.com/anon55555/mt"
 	"github.com/yuin/gopher-lua"
 )
 
-//go:generate ./generate.lua
+//go:generate ./read_mkauto.lua
 
 func readBool(l *lua.LState, val lua.LValue, ptr *bool) {
 	if val.Type() != lua.LTBool {

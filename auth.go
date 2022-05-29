@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/HimbeerserverDE/srp"
 	"github.com/anon55555/mt"
-	"github.com/dragonfireclient/hydra-dragonfire/tolua"
+	"github.com/dragonfireclient/hydra-dragonfire/convert"
 	"github.com/yuin/gopher-lua"
 	"strings"
 	"time"
@@ -57,7 +57,7 @@ func (auth *Auth) create(client *Client, l *lua.LState) {
 	l.SetMetatable(auth.userdata, l.GetTypeMetatable("hydra.auth"))
 }
 
-func (auth *Auth) tolua() lua.LValue {
+func (auth *Auth) push() lua.LValue {
 	return auth.userdata
 }
 
@@ -90,7 +90,7 @@ func (auth *Auth) checkState(state authState, pkt *mt.Pkt) bool {
 		return true
 	}
 
-	auth.fail("received " + string(tolua.PktType(pkt)) + " in invalid state")
+	auth.fail("received " + string(convert.PushPktType(pkt)) + " in invalid state")
 	return false
 }
 

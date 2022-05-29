@@ -2,7 +2,7 @@ package main
 
 import (
 	_ "embed"
-	"github.com/dragonfireclient/hydra-dragonfire/tolua"
+	"github.com/dragonfireclient/hydra-dragonfire/convert"
 	"github.com/yuin/gopher-lua"
 	"os"
 	"os/signal"
@@ -63,7 +63,7 @@ func l_poll(l *lua.LState) int {
 	} else {
 		l.Push(client.userdata)
 	}
-	l.Push(tolua.Pkt(l, pkt))
+	l.Push(convert.PushPkt(l, pkt))
 	l.Push(lua.LBool(timeout))
 	return 3
 }
