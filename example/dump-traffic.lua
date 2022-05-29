@@ -1,10 +1,5 @@
 #!/usr/bin/env hydra-dragonfire
-local address, name, password = unpack(arg)
-local client = hydra.client(address)
-
-client:enable("auth")
-client.auth:username(name)
-client.auth:password(password or "")
+local client = require("client")()
 
 client:wildcard(true)
 client:connect()
@@ -21,7 +16,7 @@ while not hydra.canceled() do
 		end
 	elseif not interrupt then
 		print("disconnected")
-		break	
+		break
 	end
 end
 

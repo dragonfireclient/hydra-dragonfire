@@ -8,9 +8,8 @@ for name, fields in spairs(parse_spec("client/enum")) do
 	funcs = funcs .. "func " .. camel .. "(l *lua.LState, val mt." .. camel .. ") lua.LValue {\n\tswitch val {\n"
 
 	for _, var in ipairs(fields) do
-		funcs = funcs .. "\tcase mt."
-			.. (fields.prefix or "") .. camel_case(var) .. (fields.postfix or "")
-			.. ":\n\t\t" .. (var == "no" and "return lua.LNil" or "return lua.LString(\"" .. var .. "\")") .. "\n"
+		funcs = funcs .. "\tcase mt." .. apply_prefix(fields, var) .. ":\n\t\t" ..
+			(var == "no" and "return lua.LNil" or "return lua.LString(\"" .. var .. "\")") .. "\n"
 	end
 
 	funcs = funcs .. "\t}\n\tpanic(\"impossible\")\n\treturn lua.LNil\n}\n\n"
@@ -21,15 +20,14 @@ for name, fields in spairs(parse_spec("client/flag")) do
 	funcs = funcs .. "func " .. camel .. "(l *lua.LState, val mt." .. camel .. ") lua.LValue {\n\ttbl := l.NewTable()\n"
 
 	for _, var in ipairs(fields) do
-		funcs = funcs .. "\tif val&mt."
-			.. (fields.prefix or "") .. camel_case(var) .. (fields.postfix or "")
+		funcs = funcs .. "\tif val&mt." .. apply_prefix(fields, var)
 			.. " != 0 {\n\t\tl.SetField(tbl, \"" .. var  .. "\", lua.LTrue)\n\t}\n"
 	end
 
 	funcs = funcs .. "\treturn tbl\n}\n\n"
 end
 
-local to_lua = {
+local tolua = {
 	string = "lua.LString(string(VAL))",
 	fixed_string = "lua.LString(string(VAL[:]))",
 	boolean = "lua.LBool(VAL)",
@@ -41,24 +39,24 @@ local to_lua = {
 	box3 = "Box3(l, [2][3]lua.LNumber{{lua.LNumber(VAL[0][0]), lua.LNumber(VAL[0][1]), lua.LNumber(VAL[0][2])}, {lua.LNumber(VAL[1][0]), lua.LNumber(VAL[1][1]), lua.LNumber(VAL[1][2])}})",
 }
 
-local function fields_to_lua(fields, indent)
+local function fields_tolua(fields, indent)
 	local impl = ""
-	
+
 	for name, type in spairs(fields) do
-		if name:sub(1, 1) ~= "[" then
+		if name:sub(1, 1) ~= "{" then
 			local camel = "val." .. camel_case(name)
 
 			local idt = indent
-			local condition = fields["[" .. name .. "]"]
+			local condition = fields["{" .. name .. "}"]
 
 			if condition then
-				impl = impl .. indent .. "if " .. condition .. " {\n" 
+				impl = impl .. indent .. "if " .. condition .. " {\n"
 				idt = idt .. "\t"
 			end
 
 			impl = impl .. idt .. "l.SetField(tbl, \"" .. name .. "\", "
-			if to_lua[type] then
-				impl = impl .. to_lua[type]:gsub("VAL", camel)
+			if tolua[type] then
+				impl = impl .. tolua[type]:gsub("VAL", camel)
 			else
 				impl = impl .. camel_case(type) .. "(l, " .. camel .. ")"
 			end
@@ -77,21 +75,21 @@ for name, fields in spairs(parse_spec("client/struct", true)) do
 	local camel = camel_case(name)
 	funcs = funcs
 		.. "func " .. camel .. "(l *lua.LState, val mt." .. camel .. ") lua.LValue {\n\ttbl := l.NewTable()\n"
-		.. fields_to_lua(fields, "\t")
+		.. fields_tolua(fields, "\t")
 		.. "\treturn tbl\n}\n\n"
 end
 
-local to_string_impl = ""
-local to_lua_impl = ""
+local pkt_type_impl = ""
+local pkt_impl = ""
 
 for name, fields in spairs(parse_spec("client/pkt", true)) do
 	local case = "\tcase *mt.ToClt" .. camel_case(name) .. ":\n"
 
-	to_string_impl = to_string_impl
+	pkt_type_impl = pkt_type_impl
 		.. case .. "\t\treturn lua.LString(\"" .. name .. "\")\n"
 
 	if next(fields) then
-		to_lua_impl = to_lua_impl .. case .. fields_to_lua(fields, "\t\t")
+		pkt_impl = pkt_impl .. case .. fields_tolua(fields, "\t\t")
 	end
 end
 
@@ -108,7 +106,7 @@ import (
 ]] .. funcs .. [[
 func PktType(pkt *mt.Pkt) lua.LString {
 	switch pkt.Cmd.(type) {
-]] .. to_string_impl .. [[
+]] .. pkt_type_impl .. [[
 	}
 	panic("impossible")
 	return ""
@@ -121,7 +119,7 @@ func Pkt(l *lua.LState, pkt *mt.Pkt) lua.LValue {
 	tbl := l.NewTable()
 	l.SetField(tbl, "_type", PktType(pkt))
 	switch val := pkt.Cmd.(type) {
-]] .. to_lua_impl .. [[
+]] .. pkt_impl .. [[
 	}
 	return tbl
 }

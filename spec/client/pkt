@@ -6,7 +6,6 @@ hello
 	string username
 accept_auth
 	vec3 player_pos
-	# int64
 	number map_seed
 	number send_interval
 	auth_methods sudo_auth_methods
@@ -14,9 +13,9 @@ accept_sudo_mode
 deny_sudo_mode
 kick
 	kick_reason reason
-	[custom] val.Reason == mt.Custom || val.Reason == mt.Shutdown || val.Reason == mt.Crash
+	{custom} val.Reason == mt.Custom || val.Reason == mt.Shutdown || val.Reason == mt.Crash
 	string custom
-	[reconnect] val.Reason == mt.Shutdown || val.Reason == mt.Crash
+	{reconnect} val.Reason == mt.Shutdown || val.Reason == mt.Crash
 	boolean reconnect
 blk_data
 	vec3 blkpos
@@ -46,7 +45,6 @@ chat_msg
 	chat_msg_type type
 	string sender
 	string text
-	# int64
 	number timestamp
 ao_rm_add
 	# TODO
@@ -156,18 +154,18 @@ rm_hud
 change_hud
 	number id
 	hud_field field
-	[pos] val.Field == mt.HUDPos
-	[name] val.Field == mt.HUDName
-	[text] val.Field == mt.HUDText
-	[number] val.Field == mt.HUDNumber
-	[item] val.Field == mt.HUDItem
-	[dir] val.Field == mt.HUDDir
-	[align] val.Field == mt.HUDAlign
-	[offset] val.Field == mt.HUDOffset
-	[world_pos] val.Field == mt.HUDWorldPos
-	[size] val.Field == mt.HUDSize
-	[z_index] val.Field == mt.HUDZIndex
-	[text_2] val.Field == mt.HUDText2
+	{pos} val.Field == mt.HUDPos
+	{name} val.Field == mt.HUDName
+	{text} val.Field == mt.HUDText
+	{number} val.Field == mt.HUDNumber
+	{item} val.Field == mt.HUDItem
+	{dir} val.Field == mt.HUDDir
+	{align} val.Field == mt.HUDAlign
+	{offset} val.Field == mt.HUDOffset
+	{world_pos} val.Field == mt.HUDWorldPos
+	{size} val.Field == mt.HUDSize
+	{z_index} val.Field == mt.HUDZIndex
+	{text_2} val.Field == mt.HUDText2
 	vec2 pos
 	string name
 	string text
@@ -196,15 +194,15 @@ sky_params
 	color sun_fog_tint
 	color moon_fog_tint
 	string fog_tint_type
-	[textures] val.Type == "skybox"
+	{textures} val.Type == "skybox"
 	texture_list textures
-	[day_sky] val.Type == "regular"
-	[day_horizon] val.Type == "regular"
-	[dawn_sky] val.Type == "regular"
-	[dawn_horizon] val.Type == "regular"
-	[night_sky] val.Type == "regular"
-	[night_horizon] val.Type == "regular"
-	[indoor] val.Type == "regular"
+	{day_sky} val.Type == "regular"
+	{day_horizon} val.Type == "regular"
+	{dawn_sky} val.Type == "regular"
+	{dawn_horizon} val.Type == "regular"
+	{night_sky} val.Type == "regular"
+	{night_horizon} val.Type == "regular"
+	{indoor} val.Type == "regular"
 	color day_sky
 	color day_horizon
 	color dawn_sky

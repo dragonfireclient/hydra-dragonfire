@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"github.com/anon55555/mt"
+	"github.com/dragonfireclient/hydra-dragonfire/fromlua"
 	"github.com/dragonfireclient/hydra-dragonfire/tolua"
 	"github.com/yuin/gopher-lua"
 	"net"
@@ -46,6 +47,7 @@ var clientFuncs = map[string]lua.LGFunction{
 	"subscribe":   l_client_subscribe,
 	"unsubscribe": l_client_unsubscribe,
 	"wildcard":    l_client_wildcard,
+	"send":        l_client_send,
 }
 
 func getClient(l *lua.LState) *Client {
@@ -254,20 +256,24 @@ func l_client_wildcard(l *lua.LState) int {
 	return 0
 }
 
-/*
-
 func l_client_send(l *lua.LState) int {
 	client := getClient(l)
-	pkt := fromlua.Pkt(l.CheckTable(2))
+	cmd := fromlua.Cmd(l)
+	doAck := l.ToBool(4)
 
 	client.mu.Lock()
 	defer client.mu.Unlock()
 
 	if client.state == csConnected {
-		client.conn.Send(pkt)
+		ack, err := client.conn.SendCmd(cmd)
+		if err != nil {
+			panic(err)
+		}
+
+		if doAck && !cmd.DefaultPktInfo().Unrel {
+			<-ack
+		}
 	}
 
 	return 0
 }
-
-*/

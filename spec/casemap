@@ -18,6 +18,11 @@ hud_field HUDField
 first_srp FirstSRP
 csm_restriction_flags CSMRestrictionFlags
 srp_bytes_salt_b SRPBytesSaltB
+srp_bytes_a SRPBytesA
+srp_bytes_m SRPBytesM
 no_csms NoCSMs
 join_ok JoinOK
 leave_ok LeaveOK
+no_sha1 NoSHA1
+fov80 FOV80
+ids IDs

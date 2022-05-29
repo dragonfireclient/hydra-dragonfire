@@ -1,21 +1,18 @@
 #!/usr/bin/env hydra-dragonfire
 local escapes = require("escapes")
-local address, name, password = unpack(arg)
-local client = hydra.client(address)
-
-client:enable("auth")
-client.auth:username(name)
-client.auth:password(password or "")
+local client = require("client")()
 
 client:subscribe("chat_msg")
 client:connect()
 
 while not hydra.canceled() do
-	local pkt, interrupt = client:poll()
+	local pkt, interrupt = client:poll(1)
 
 	if pkt then
 		print(escapes.strip_all(pkt.text))
-	elseif not interrupt then
+	elseif interrupt then
+		client:send("chat_msg", {msg = "test"})
+	else
 		print("disconnected")
 		break
 	end

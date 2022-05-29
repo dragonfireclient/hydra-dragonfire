@@ -1,0 +1,12 @@
+keys
+	postfix Key
+	forward
+	backward
+	left
+	right
+	jump
+	special
+	sneak
+	dig
+	place
+	zoom

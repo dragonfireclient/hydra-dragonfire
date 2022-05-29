@@ -22,10 +22,14 @@ var builtinVector string
 //go:embed builtin/escapes.lua
 var builtinEscapes string
 
+//go:embed builtin/client.lua
+var builtinClient string
+
 var builtinFiles = []string{
 	builtinLuaX,
 	builtinVector,
 	builtinEscapes,
+	builtinClient,
 }
 
 var hydraFuncs = map[string]lua.LGFunction{

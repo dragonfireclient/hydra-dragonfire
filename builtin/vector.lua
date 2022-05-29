@@ -34,6 +34,14 @@ function mt_vec2:__tostring()
 	return "(" .. self.x .. ", " .. self.y .. ")"
 end
 
+mt_vec2.__index = {
+	validate = function(self)
+		assert(type(self.x) == "number")
+		assert(type(self.y) == "number")
+		return self
+	end
+}
+
 function vec2(a, b)
 	local o = {}
 
@@ -46,7 +54,7 @@ function vec2(a, b)
 	end
 
 	setmetatable(o, mt_vec2)
-	return o
+	return o:validate()
 end
 
 -- vec3
@@ -57,7 +65,7 @@ local mt_vec3 = arith_mt(function(op)
 			return vec3(a.x ]] .. op.. [[ b, a.y ]] .. op .. [[ b, a.z ]] .. op .. [[ b)
 		else
 			return vec3(a.x ]] .. op.. [[ b.x, a.y ]] .. op.. [[ b.y, a.z ]] .. op.. [[ b.z)
-		end	
+		end
 	]]
 end)
 
@@ -68,6 +76,15 @@ end
 function mt_vec3:__tostring()
 	return "(" .. self.x .. ", " .. self.y .. ", " .. self.z .. ")"
 end
+
+mt_vec3.__index = {
+	validate = function(self)
+		assert(type(self.x) == "number")
+		assert(type(self.y) == "number")
+		assert(type(self.z) == "number")
+		return self
+	end
+}
 
 function vec3(a, b, c)
 	local o = {}
@@ -83,7 +100,7 @@ function vec3(a, b, c)
 	end
 
 	setmetatable(o, mt_vec3)
-	return o
+	return o:validate()
 end
 
 -- box
@@ -108,6 +125,15 @@ mt_box.__index = {
 			return a.min <= b.min and a.max >= b.max
 		end
 	end,
+	validate = function(self)
+		if type(self.min) == "number" then
+			assert(type(self.max) == "number")
+		else
+			assert(not self.min.z == not self.max.z)
+			self.min:validate()
+			self.max:validate()
+		end
+	end,
 }
 
 function box(a, b)
@@ -122,5 +148,5 @@ function box(a, b)
 	end
 
 	setmetatable(o, mt_box)
-	return o
+	return o:validate()
 end

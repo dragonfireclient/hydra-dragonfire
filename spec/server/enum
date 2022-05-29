@@ -1,0 +1,7 @@
+interaction
+	dig
+	stop_digging
+	dug
+	place
+	use
+	activate

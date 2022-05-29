@@ -9,7 +9,7 @@ local function snext(t, state)
 			end
 		end
 		table.sort(t.__sorted)
-		
+
 		key = t.__sorted[1]
 	else
 		for i, v in ipairs(t.__sorted) do
@@ -41,7 +41,7 @@ local function parse_pair(pair, value_first)
 	if idx then
 		local first, second = pair:sub(1, idx - 1), pair:sub(idx + 1)
 
-		if value_first and first:sub(1, 1) ~= "[" then
+		if value_first and first:sub(1, 1) ~= "{" then
 			return second, first
 		else
 			return first, second
@@ -103,3 +103,6 @@ function camel_case(snake)
 	return camel
 end
 
+function apply_prefix(fields, str)
+	return (fields.prefix or "") .. camel_case(str) .. (fields.postfix or "")
+end

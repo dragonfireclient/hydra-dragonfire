@@ -1,0 +1,8 @@
+player_pos
+	[3]int32 pos100
+	[3]int32 vel100
+	int32 pitch100
+	int32 yaw100
+	Keys keys
+	uint8 fov80
+	uint8 wanted_range

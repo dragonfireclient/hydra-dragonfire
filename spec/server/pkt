@@ -1,0 +1,63 @@
+nil
+init
+	uint8 serialize_ver
+	CompressionModes supported_compression
+	uint16 min_proto_ver
+	uint16 max_proto_ver
+	string player_name
+	bool send_full_item_meta
+init2
+	string lang
+join_mod_chan
+	string channel
+leave_mod_chan
+	string channel
+msg_mod_chan
+	string channel
+	string msg
+player_pos
+	PlayerPos pos
+got_blks
+	[][3]int16 blks
+deleted_blks
+	[][3]int16 blks
+inv_action
+	string action
+chat_msg
+	string msg
+fall_dmg
+	uint16 amount
+select_item
+	uint16 slot
+respawn
+interact
+	Interaction action
+	uint16 item_slot
+	PointedThing pointed
+	PlayerPos pos
+removed_sounds
+	[]SoundID ids
+node_meta_fields
+	[3]int16 pos
+	string formname
+	[]Field fields
+inv_fields
+	string formname
+	[]Field fields
+req_media
+	[]string filenames
+clt_ready
+	uint8 major
+	uint8 minor
+	uint8 patch
+	string version
+	uint16 formspec
+first_srp
+	[]byte salt
+	[]byte verifier
+	bool empty_passwd
+srp_bytes_a
+	[]byte a
+	bool no_sha1
+srp_bytes_m
+	[]byte m
