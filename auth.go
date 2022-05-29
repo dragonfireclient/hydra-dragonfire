@@ -69,9 +69,9 @@ func (auth *Auth) connect() {
 	go func() {
 		for auth.client.state == csConnected && auth.state == asInit {
 			auth.client.conn.SendCmd(&mt.ToSrvInit{
-				SerializeVer: 28,
-				MinProtoVer:  39,
-				MaxProtoVer:  39,
+				SerializeVer: serializeVer,
+				MinProtoVer:  protoVer,
+				MaxProtoVer:  protoVer,
 				PlayerName:   auth.username,
 			})
 			time.Sleep(500 * time.Millisecond)

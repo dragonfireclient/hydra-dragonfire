@@ -13,6 +13,9 @@ import (
 var lastTime = time.Now()
 var canceled = false
 
+var serializeVer uint8 = 28
+var protoVer uint16 = 39
+
 //go:embed builtin/luax/init.lua
 var builtinLuaX string
 
@@ -97,6 +100,8 @@ func main() {
 
 	hydra := l.SetFuncs(l.NewTable(), hydraFuncs)
 	l.SetField(hydra, "BS", lua.LNumber(10.0))
+	l.SetField(hydra, "serialize_ver", lua.LNumber(serializeVer))
+	l.SetField(hydra, "proto_ver", lua.LNumber(protoVer))
 	l.SetGlobal("hydra", hydra)
 
 	l.SetField(l.NewTypeMetatable("hydra.auth"), "__index", l.SetFuncs(l.NewTable(), authFuncs))
