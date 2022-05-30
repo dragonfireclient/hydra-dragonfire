@@ -11,7 +11,12 @@ Hydra is WIP: there are bugs, API may change any time, doc is incomplete, some p
 
 # Installation
 Go 1.18 is required.
-`go install github.com/dragonfireclient/hydra-dragonfire@latest`
+
+- `git clone https://github.com/dragonfireclient/hydra-dragonfire`
+- `cd hydra-dragonfire`
+- `git submoudle update --init`
+- `go build`
+
 
 # Invocation
 Due to limitations of Go, hydra unfortunately cannot be `require()`'d from a Lua script. Instead, the hydra binary has to be invoked with a script as argument:
