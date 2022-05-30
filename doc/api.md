@@ -18,7 +18,7 @@ Hydra uses gopher-lua, Lua 5.1
 
 ## Standard library additions
 
-Source: [builtin/luax](../bultin/luax).
+Source code: [luax](https://github.com/EliasFleckenstein03/luax).
 
 - `table.indexof(list, val)`
 - `table.copy(t, seen)`
