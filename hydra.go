@@ -36,11 +36,11 @@ var builtinFiles = []string{
 }
 
 var hydraFuncs = map[string]lua.LGFunction{
-	"client":     l_client,
-	"dtime":      l_dtime,
-	"canceled":   l_canceled,
-	"poll":       l_poll,
-	"disconnect": l_disconnect,
+	"client":   l_client,
+	"dtime":    l_dtime,
+	"canceled": l_canceled,
+	"poll":     l_poll,
+	"close":    l_close,
 }
 
 func signalChannel() chan os.Signal {
@@ -71,9 +71,9 @@ func l_poll(l *lua.LState) int {
 	return 3
 }
 
-func l_disconnect(l *lua.LState) int {
+func l_close(l *lua.LState) int {
 	for _, client := range getClients(l) {
-		client.disconnect()
+		client.closeConn()
 	}
 
 	return 0

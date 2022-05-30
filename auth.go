@@ -82,7 +82,7 @@ func (auth *Auth) connect() {
 func (auth *Auth) fail(err string) {
 	auth.err = err
 	auth.state = asError
-	auth.client.disconnect()
+	auth.client.closeConn()
 }
 
 func (auth *Auth) checkState(state authState, pkt *mt.Pkt) bool {

@@ -41,7 +41,7 @@ var clientFuncs = map[string]lua.LGFunction{
 	"state":       l_client_state,
 	"connect":     l_client_connect,
 	"poll":        l_client_poll,
-	"disconnect":  l_client_disconnect,
+	"close":       l_client_close,
 	"enable":      l_client_enable,
 	"subscribe":   l_client_subscribe,
 	"unsubscribe": l_client_unsubscribe,
@@ -76,7 +76,7 @@ func getStrings(l *lua.LState) []string {
 	return strs
 }
 
-func (client *Client) disconnect() {
+func (client *Client) closeConn() {
 	client.mu.Lock()
 	defer client.mu.Unlock()
 
@@ -162,16 +162,15 @@ func l_client_connect(l *lua.LState) int {
 
 			if err == nil {
 				client.mu.Lock()
-
 				for _, component := range client.components {
 					component.process(&pkt)
 				}
+				_, subscribed := client.subscribed[string(convert.PushPktType(&pkt))]
+				client.mu.Unlock()
 
-				if _, exists := client.subscribed[string(convert.PushPktType(&pkt))]; exists || client.wildcard {
+				if subscribed || client.wildcard {
 					client.queue <- &pkt
 				}
-
-				client.mu.Unlock()
 			} else if errors.Is(err, net.ErrClosed) {
 				close(client.queue)
 				return
@@ -197,9 +196,9 @@ func l_client_poll(l *lua.LState) int {
 	return 2
 }
 
-func l_client_disconnect(l *lua.LState) int {
+func l_client_close(l *lua.LState) int {
 	client := getClient(l)
-	client.disconnect()
+	client.closeConn()
 	return 0
 }
 
@@ -257,6 +256,11 @@ func l_client_wildcard(l *lua.LState) int {
 
 func l_client_send(l *lua.LState) int {
 	client := getClient(l)
+
+	if client.state != csConnected {
+		panic("not connected")
+	}
+
 	cmd := convert.ReadCmd(l)
 	doAck := l.ToBool(4)
 

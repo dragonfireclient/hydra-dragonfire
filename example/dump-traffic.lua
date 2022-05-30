@@ -20,4 +20,4 @@ while not hydra.canceled() do
 	end
 end
 
-client:disconnect()
+client:close()
