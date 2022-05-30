@@ -7,17 +7,17 @@ Capable of deserializing ToClt packets and serializing ToSrv packets.
 Main use case are bot clients. Multiple clients can easily be spawend and polled from one script - hence the name "Hydra".
 Hydra may also be useful for integration testing or network debugging.
 
-Hydra is WIP: there are bugs, API may change any time, some packets are unimplemented and many components are yet to be added.
+Hydra is WIP: there are bugs, API may change any time, doc is incomplete, some packets are unimplemented and many components are yet to be added. However, hydra can already be used and big parts of it's main functionality are implemented.
 
 # Installation
 Go 1.18 is required.
 `go install github.com/dragonfireclient/hydra-dragonfire@latest`
 
 # Invocation
-Due to limitations of Go, hydra can not simply be required from a Lua script. Instead, the hydra binary has to be invoked with a script as argument:
+Due to limitations of Go, hydra unfortunately cannot be `require()`'d from a Lua script. Instead, the hydra binary has to be invoked with a script as argument:
 `hydra-dragonfire file.lua <args>`. Any additional arguments `<args>` are provided to the script.
 
-# Architecture
+# Architecture Overview
 By default, hydra will only take care of connection and packet serialization, no state management takes place.
 Hydra is a library, not a framework: it does not organize your code and there is no module system.
 
@@ -30,9 +30,5 @@ Additionally, different native components can be enabled per-client to manage st
 Currently only the `auth` component is available, but components like `map`, `objs`, `inv`, `pos`, `playerlist` etc. will be added in the future.
 Components handle packets asynchronously, they will process them even if poll is not called.
 
-# Documentation
-For available packets, see `spec/client` and `spec/server`.
-
-For available utilities, see `builtin`.
-
-Documentation for native functions is yet TODO.
+# Further Documentation
+[API documentation](doc/api.md)
