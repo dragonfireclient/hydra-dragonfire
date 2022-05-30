@@ -1,3 +1,0 @@
-[submodule "builtin/luax"]
-	path = builtin/luax
-	url = https://github.com/EliasFleckenstein03/luax
