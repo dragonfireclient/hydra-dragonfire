@@ -30,6 +30,10 @@ function mt_vec2:__neg()
 	return vec2(-self.x, -self.y)
 end
 
+function mt_vec2:__len()
+	return math.sqrt(self.x ^ 2 + self.y ^ 2)
+end
+
 function mt_vec2:__tostring()
 	return "(" .. self.x .. ", " .. self.y .. ")"
 end
@@ -71,6 +75,10 @@ end)
 
 function mt_vec3:__neg()
 	return vec3(-self.x, -self.y, -self.z)
+end
+
+function mt_vec3:__len()
+	return math.sqrt(self.x ^ 2 + self.y ^ 2 + self.z ^ 2)
 end
 
 function mt_vec3:__tostring()
