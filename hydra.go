@@ -51,6 +51,7 @@ func signalChannel() chan os.Signal {
 
 func l_dtime(l *lua.LState) int {
 	l.Push(lua.LNumber(time.Since(lastTime).Seconds()))
+	lastTime = time.Now()
 	return 1
 }
 
