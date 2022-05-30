@@ -61,12 +61,12 @@ func l_canceled(l *lua.LState) int {
 
 func l_poll(l *lua.LState) int {
 	client, pkt, timeout := doPoll(l, getClients(l))
+	l.Push(convert.PushPkt(l, pkt))
 	if client == nil {
 		l.Push(lua.LNil)
 	} else {
 		l.Push(client.userdata)
 	}
-	l.Push(convert.PushPkt(l, pkt))
 	l.Push(lua.LBool(timeout))
 	return 3
 }
