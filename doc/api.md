@@ -15,6 +15,7 @@ Hydra uses gopher-lua, Lua 5.1
 
 - `escapes`: contains utility functions to deal with minetest escape sequences, see [escapes.md](escapes.md)
 - `client`: a function to create a client from command line arguments in the form `<server> <username> <password>`. This is trivial but so commonly used that this function was added to avoid repetition in scripts.
+- `base64`: contains the `base64.encode(data)` function to base64 encode a string as well as `base64.decode(data)` to decode
 
 ## Standard library additions
 

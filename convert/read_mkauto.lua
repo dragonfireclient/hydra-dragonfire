@@ -11,7 +11,7 @@ local readers = {
 	PointedThing = true,
 }
 
-local static_uses = {
+local external = {
 	"[3]int16",
 	"AOID"
 }
@@ -40,7 +40,7 @@ local function generate(name)
 	end
 
 	if not readers[fnname] then
-		local fun = "func read" .. fnname .. "(l *lua.LState, val lua.LValue, ptr *" .. type  .. ") {\n"
+		local fun = "func Read" .. fnname .. "(l *lua.LState, val lua.LValue, ptr *" .. type  .. ") {\n"
 
 		if child then
 			fun = fun .. "\tif val.Type() != lua.LTTable {\n\t\tpanic(\"invalid value for "
@@ -53,7 +53,7 @@ local function generate(name)
 	n := tbl.MaxN()
 	*ptr = make(]] .. type .. [[, n)
 	for i := range *ptr {
-		read]] .. childfn .. [[(l, l.RawGetInt(tbl, i+1), &(*ptr)[i])
+		Read]] .. childfn .. [[(l, l.RawGetInt(tbl, i+1), &(*ptr)[i])
 	}
 ]]
 			else
@@ -64,14 +64,20 @@ local function generate(name)
 					end
 
 					fun = fun
-						.. "\tread" .. childfn
+						.. "\tRead" .. childfn
 						.. "(l, l.GetField(val, \"" .. v .. "\"), &(*ptr)[" .. (i - 1) .. "])\n"
 				end
 			end
 		else
+			local is_float = type == "float32" or type == "float64"
+
 			fun = fun .. "\tif val.Type() != lua.LTNumber {\n\t\tpanic(\"invalid value for "
 				.. name .. ": must be a number\")\n\t}\n"
-				.. "\t*ptr = " .. type .. "(val.(lua.LNumber))\n"
+				.. "\t*ptr = " .. type .. "("
+				.. (is_float and "" or "math.Round(float64(")
+				.. "val.(lua.LNumber)"
+				.. (is_float and "" or "))")
+				.. ")\n"
 		end
 
 		fun = fun .. "}\n\n"
@@ -82,13 +88,13 @@ local function generate(name)
 	return fnname, type
 end
 
-for _, use in ipairs(static_uses) do
+for _, use in ipairs(external) do
 	generate(use)
 end
 
 local function signature(name, prefix, type)
 	local camel = camel_case(name)
-	return "func read" .. camel .. "(l *lua.LState, val lua.LValue, ptr *" .. prefix .. camel  .. ") {\n"
+	return "func Read" .. camel .. "(l *lua.LState, val lua.LValue, ptr *" .. prefix .. camel  .. ") {\n"
 end
 
 for name, fields in spairs(parse_spec("server/enum")) do
@@ -135,7 +141,7 @@ local function fields_fromlua(fields, indent)
 	local impl = ""
 
 	for name, type in spairs(fields) do
-		impl = impl .. indent .. "read" .. generate(type) .. "(l, l.GetField(val, \"" .. name .. "\"), &ptr."
+		impl = impl .. indent .. "Read" .. generate(type) .. "(l, l.GetField(val, \"" .. name .. "\"), &ptr."
 			.. camel_case(name) .. ")\n"
 	end
 
@@ -183,6 +189,7 @@ package convert
 import (
 	"github.com/anon55555/mt"
 	"github.com/yuin/gopher-lua"
+	"math"
 )
 
 ]] .. funcs .. [[

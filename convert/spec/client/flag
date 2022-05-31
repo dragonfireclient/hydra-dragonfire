@@ -17,3 +17,9 @@ hud_flags
 	breath_bar
 	minimap
 	radar_minimap
+map_blk_flags
+	prefix Blk
+	is_underground
+	day_night_diff
+	light_expired
+	not_generated

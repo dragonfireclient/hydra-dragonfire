@@ -1,0 +1,43 @@
+node
+	number param0
+	number param1
+	number param2
+tile_anim
+	anim_type type
+	vec2 aspect_ratio
+	vec2 n_frames
+	number duration
+hud
+	hud_type type
+	vec2 pos
+	string name
+	vec2 scale
+	string text
+	number number
+	number item
+	number dir
+	vec2 align
+	vec2 offset
+	vec3 world_pos
+	vec2 size
+	number z_index
+	string text_2
+map_blk
+	map_blk_flags flags
+	number lit_from
+	%param0% mt.Content
+	4096 param0
+	%param1% uint8
+	4096 param1
+	%param2% uint8
+	4096 param2
+	node_metas node_metas
+node_meta
+	node_meta_fields fields
+	inv inv
+tool_caps
+	number attack_cooldown
+	number max_drop_lvl
+	group_caps group_caps
+	groups dmg_groups
+	number punch_uses

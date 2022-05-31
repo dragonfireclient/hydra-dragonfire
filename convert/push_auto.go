@@ -6,7 +6,7 @@ import (
 	"github.com/yuin/gopher-lua"
 )
 
-func pushAnimType(l *lua.LState, val mt.AnimType) lua.LValue {
+func PushAnimType(l *lua.LState, val mt.AnimType) lua.LValue {
 	switch val {
 	case mt.NoAnim:
 		return lua.LNil
@@ -19,7 +19,7 @@ func pushAnimType(l *lua.LState, val mt.AnimType) lua.LValue {
 	return lua.LNil
 }
 
-func pushChatMsgType(l *lua.LState, val mt.ChatMsgType) lua.LValue {
+func PushChatMsgType(l *lua.LState, val mt.ChatMsgType) lua.LValue {
 	switch val {
 	case mt.RawMsg:
 		return lua.LString("raw")
@@ -34,7 +34,7 @@ func pushChatMsgType(l *lua.LState, val mt.ChatMsgType) lua.LValue {
 	return lua.LNil
 }
 
-func pushHotbarParam(l *lua.LState, val mt.HotbarParam) lua.LValue {
+func PushHotbarParam(l *lua.LState, val mt.HotbarParam) lua.LValue {
 	switch val {
 	case mt.HotbarSize:
 		return lua.LString("size")
@@ -47,7 +47,7 @@ func pushHotbarParam(l *lua.LState, val mt.HotbarParam) lua.LValue {
 	return lua.LNil
 }
 
-func pushHUDField(l *lua.LState, val mt.HUDField) lua.LValue {
+func PushHUDField(l *lua.LState, val mt.HUDField) lua.LValue {
 	switch val {
 	case mt.HUDPos:
 		return lua.LString("pos")
@@ -80,7 +80,7 @@ func pushHUDField(l *lua.LState, val mt.HUDField) lua.LValue {
 	return lua.LNil
 }
 
-func pushHUDType(l *lua.LState, val mt.HUDType) lua.LValue {
+func PushHUDType(l *lua.LState, val mt.HUDType) lua.LValue {
 	switch val {
 	case mt.ImgHUD:
 		return lua.LString("img")
@@ -99,7 +99,7 @@ func pushHUDType(l *lua.LState, val mt.HUDType) lua.LValue {
 	return lua.LNil
 }
 
-func pushKickReason(l *lua.LState, val mt.KickReason) lua.LValue {
+func PushKickReason(l *lua.LState, val mt.KickReason) lua.LValue {
 	switch val {
 	case mt.WrongPasswd:
 		return lua.LString("wrong_passwd")
@@ -132,7 +132,7 @@ func pushKickReason(l *lua.LState, val mt.KickReason) lua.LValue {
 	return lua.LNil
 }
 
-func pushModChanSig(l *lua.LState, val mt.ModChanSig) lua.LValue {
+func PushModChanSig(l *lua.LState, val mt.ModChanSig) lua.LValue {
 	switch val {
 	case mt.JoinOK:
 		return lua.LString("join_ok")
@@ -151,7 +151,7 @@ func pushModChanSig(l *lua.LState, val mt.ModChanSig) lua.LValue {
 	return lua.LNil
 }
 
-func pushPlayerListUpdateType(l *lua.LState, val mt.PlayerListUpdateType) lua.LValue {
+func PushPlayerListUpdateType(l *lua.LState, val mt.PlayerListUpdateType) lua.LValue {
 	switch val {
 	case mt.InitPlayers:
 		return lua.LString("init")
@@ -164,7 +164,7 @@ func pushPlayerListUpdateType(l *lua.LState, val mt.PlayerListUpdateType) lua.LV
 	return lua.LNil
 }
 
-func pushSoundSrcType(l *lua.LState, val mt.SoundSrcType) lua.LValue {
+func PushSoundSrcType(l *lua.LState, val mt.SoundSrcType) lua.LValue {
 	switch val {
 	case mt.NoSrc:
 		return lua.LNil
@@ -177,86 +177,76 @@ func pushSoundSrcType(l *lua.LState, val mt.SoundSrcType) lua.LValue {
 	return lua.LNil
 }
 
-func pushAuthMethods(l *lua.LState, val mt.AuthMethods) lua.LValue {
+func PushAuthMethods(l *lua.LState, val mt.AuthMethods) lua.LValue {
 	tbl := l.NewTable()
-	if val&mt.LegacyPasswd != 0 {
-		l.SetField(tbl, "legacy_passwd", lua.LTrue)
-	}
-	if val&mt.SRP != 0 {
-		l.SetField(tbl, "srp", lua.LTrue)
-	}
-	if val&mt.FirstSRP != 0 {
-		l.SetField(tbl, "first_srp", lua.LTrue)
-	}
+	l.SetField(tbl, "legacy_passwd", lua.LBool(val&mt.LegacyPasswd != 0))
+	l.SetField(tbl, "srp", lua.LBool(val&mt.SRP != 0))
+	l.SetField(tbl, "first_srp", lua.LBool(val&mt.FirstSRP != 0))
 	return tbl
 }
 
-func pushCSMRestrictionFlags(l *lua.LState, val mt.CSMRestrictionFlags) lua.LValue {
+func PushCSMRestrictionFlags(l *lua.LState, val mt.CSMRestrictionFlags) lua.LValue {
 	tbl := l.NewTable()
-	if val&mt.NoCSMs != 0 {
-		l.SetField(tbl, "no_csms", lua.LTrue)
-	}
-	if val&mt.NoChatMsgs != 0 {
-		l.SetField(tbl, "no_chat_msgs", lua.LTrue)
-	}
-	if val&mt.NoNodeDefs != 0 {
-		l.SetField(tbl, "no_node_defs", lua.LTrue)
-	}
-	if val&mt.LimitMapRange != 0 {
-		l.SetField(tbl, "limit_map_range", lua.LTrue)
-	}
-	if val&mt.NoPlayerList != 0 {
-		l.SetField(tbl, "no_player_list", lua.LTrue)
-	}
+	l.SetField(tbl, "no_csms", lua.LBool(val&mt.NoCSMs != 0))
+	l.SetField(tbl, "no_chat_msgs", lua.LBool(val&mt.NoChatMsgs != 0))
+	l.SetField(tbl, "no_node_defs", lua.LBool(val&mt.NoNodeDefs != 0))
+	l.SetField(tbl, "limit_map_range", lua.LBool(val&mt.LimitMapRange != 0))
+	l.SetField(tbl, "no_player_list", lua.LBool(val&mt.NoPlayerList != 0))
 	return tbl
 }
 
-func pushHUDFlags(l *lua.LState, val mt.HUDFlags) lua.LValue {
+func PushHUDFlags(l *lua.LState, val mt.HUDFlags) lua.LValue {
 	tbl := l.NewTable()
-	if val&mt.ShowHotbar != 0 {
-		l.SetField(tbl, "hotbar", lua.LTrue)
-	}
-	if val&mt.ShowHealthBar != 0 {
-		l.SetField(tbl, "health_bar", lua.LTrue)
-	}
-	if val&mt.ShowCrosshair != 0 {
-		l.SetField(tbl, "crosshair", lua.LTrue)
-	}
-	if val&mt.ShowWieldedItem != 0 {
-		l.SetField(tbl, "wielded_item", lua.LTrue)
-	}
-	if val&mt.ShowBreathBar != 0 {
-		l.SetField(tbl, "breath_bar", lua.LTrue)
-	}
-	if val&mt.ShowMinimap != 0 {
-		l.SetField(tbl, "minimap", lua.LTrue)
-	}
-	if val&mt.ShowRadarMinimap != 0 {
-		l.SetField(tbl, "radar_minimap", lua.LTrue)
-	}
+	l.SetField(tbl, "hotbar", lua.LBool(val&mt.ShowHotbar != 0))
+	l.SetField(tbl, "health_bar", lua.LBool(val&mt.ShowHealthBar != 0))
+	l.SetField(tbl, "crosshair", lua.LBool(val&mt.ShowCrosshair != 0))
+	l.SetField(tbl, "wielded_item", lua.LBool(val&mt.ShowWieldedItem != 0))
+	l.SetField(tbl, "breath_bar", lua.LBool(val&mt.ShowBreathBar != 0))
+	l.SetField(tbl, "minimap", lua.LBool(val&mt.ShowMinimap != 0))
+	l.SetField(tbl, "radar_minimap", lua.LBool(val&mt.ShowRadarMinimap != 0))
 	return tbl
 }
 
-func pushHUD(l *lua.LState, val mt.HUD) lua.LValue {
+func PushMapBlkFlags(l *lua.LState, val mt.MapBlkFlags) lua.LValue {
 	tbl := l.NewTable()
-	l.SetField(tbl, "align", pushVec2(l, [2]lua.LNumber{lua.LNumber(val.Align[0]), lua.LNumber(val.Align[1])}))
+	l.SetField(tbl, "is_underground", lua.LBool(val&mt.BlkIsUnderground != 0))
+	l.SetField(tbl, "day_night_diff", lua.LBool(val&mt.BlkDayNightDiff != 0))
+	l.SetField(tbl, "light_expired", lua.LBool(val&mt.BlkLightExpired != 0))
+	l.SetField(tbl, "not_generated", lua.LBool(val&mt.BlkNotGenerated != 0))
+	return tbl
+}
+
+func PushHUD(l *lua.LState, val mt.HUD) lua.LValue {
+	tbl := l.NewTable()
+	l.SetField(tbl, "align", PushVec2(l, [2]lua.LNumber{lua.LNumber(val.Align[0]), lua.LNumber(val.Align[1])}))
 	l.SetField(tbl, "dir", lua.LNumber(val.Dir))
 	l.SetField(tbl, "item", lua.LNumber(val.Item))
 	l.SetField(tbl, "name", lua.LString(string(val.Name)))
 	l.SetField(tbl, "number", lua.LNumber(val.Number))
-	l.SetField(tbl, "offset", pushVec2(l, [2]lua.LNumber{lua.LNumber(val.Offset[0]), lua.LNumber(val.Offset[1])}))
-	l.SetField(tbl, "pos", pushVec2(l, [2]lua.LNumber{lua.LNumber(val.Pos[0]), lua.LNumber(val.Pos[1])}))
-	l.SetField(tbl, "scale", pushVec2(l, [2]lua.LNumber{lua.LNumber(val.Scale[0]), lua.LNumber(val.Scale[1])}))
-	l.SetField(tbl, "size", pushVec2(l, [2]lua.LNumber{lua.LNumber(val.Size[0]), lua.LNumber(val.Size[1])}))
+	l.SetField(tbl, "offset", PushVec2(l, [2]lua.LNumber{lua.LNumber(val.Offset[0]), lua.LNumber(val.Offset[1])}))
+	l.SetField(tbl, "pos", PushVec2(l, [2]lua.LNumber{lua.LNumber(val.Pos[0]), lua.LNumber(val.Pos[1])}))
+	l.SetField(tbl, "scale", PushVec2(l, [2]lua.LNumber{lua.LNumber(val.Scale[0]), lua.LNumber(val.Scale[1])}))
+	l.SetField(tbl, "size", PushVec2(l, [2]lua.LNumber{lua.LNumber(val.Size[0]), lua.LNumber(val.Size[1])}))
 	l.SetField(tbl, "text", lua.LString(string(val.Text)))
 	l.SetField(tbl, "text_2", lua.LString(string(val.Text2)))
-	l.SetField(tbl, "type", pushHUDType(l, val.Type))
-	l.SetField(tbl, "world_pos", pushVec3(l, [3]lua.LNumber{lua.LNumber(val.WorldPos[0]), lua.LNumber(val.WorldPos[1]), lua.LNumber(val.WorldPos[2])}))
+	l.SetField(tbl, "type", PushHUDType(l, val.Type))
+	l.SetField(tbl, "world_pos", PushVec3(l, [3]lua.LNumber{lua.LNumber(val.WorldPos[0]), lua.LNumber(val.WorldPos[1]), lua.LNumber(val.WorldPos[2])}))
 	l.SetField(tbl, "z_index", lua.LNumber(val.ZIndex))
 	return tbl
 }
 
-func pushNode(l *lua.LState, val mt.Node) lua.LValue {
+func PushMapBlk(l *lua.LState, val mt.MapBlk) lua.LValue {
+	tbl := l.NewTable()
+	l.SetField(tbl, "flags", PushMapBlkFlags(l, val.Flags))
+	l.SetField(tbl, "lit_from", lua.LNumber(val.LitFrom))
+	l.SetField(tbl, "node_metas", PushNodeMetas(l, val.NodeMetas))
+	l.SetField(tbl, "param0", Push4096[mt.Content](l, val.Param0))
+	l.SetField(tbl, "param1", Push4096[uint8](l, val.Param1))
+	l.SetField(tbl, "param2", Push4096[uint8](l, val.Param2))
+	return tbl
+}
+
+func PushNode(l *lua.LState, val mt.Node) lua.LValue {
 	tbl := l.NewTable()
 	l.SetField(tbl, "param0", lua.LNumber(val.Param0))
 	l.SetField(tbl, "param1", lua.LNumber(val.Param1))
@@ -264,12 +254,29 @@ func pushNode(l *lua.LState, val mt.Node) lua.LValue {
 	return tbl
 }
 
-func pushTileAnim(l *lua.LState, val mt.TileAnim) lua.LValue {
+func PushNodeMeta(l *lua.LState, val mt.NodeMeta) lua.LValue {
 	tbl := l.NewTable()
-	l.SetField(tbl, "aspect_ratio", pushVec2(l, [2]lua.LNumber{lua.LNumber(val.AspectRatio[0]), lua.LNumber(val.AspectRatio[1])}))
+	l.SetField(tbl, "fields", PushNodeMetaFields(l, val.Fields))
+	l.SetField(tbl, "inv", PushInv(l, val.Inv))
+	return tbl
+}
+
+func PushTileAnim(l *lua.LState, val mt.TileAnim) lua.LValue {
+	tbl := l.NewTable()
+	l.SetField(tbl, "aspect_ratio", PushVec2(l, [2]lua.LNumber{lua.LNumber(val.AspectRatio[0]), lua.LNumber(val.AspectRatio[1])}))
 	l.SetField(tbl, "duration", lua.LNumber(val.Duration))
-	l.SetField(tbl, "n_frames", pushVec2(l, [2]lua.LNumber{lua.LNumber(val.NFrames[0]), lua.LNumber(val.NFrames[1])}))
-	l.SetField(tbl, "type", pushAnimType(l, val.Type))
+	l.SetField(tbl, "n_frames", PushVec2(l, [2]lua.LNumber{lua.LNumber(val.NFrames[0]), lua.LNumber(val.NFrames[1])}))
+	l.SetField(tbl, "type", PushAnimType(l, val.Type))
+	return tbl
+}
+
+func PushToolCaps(l *lua.LState, val mt.ToolCaps) lua.LValue {
+	tbl := l.NewTable()
+	l.SetField(tbl, "attack_cooldown", lua.LNumber(val.AttackCooldown))
+	l.SetField(tbl, "dmg_groups", PushGroups(l, val.DmgGroups))
+	l.SetField(tbl, "group_caps", PushGroupCaps(l, val.GroupCaps))
+	l.SetField(tbl, "max_drop_lvl", lua.LNumber(val.MaxDropLvl))
+	l.SetField(tbl, "punch_uses", lua.LNumber(val.PunchUses))
 	return tbl
 }
 
@@ -405,49 +412,50 @@ func PushPkt(l *lua.LState, pkt *mt.Pkt) lua.LValue {
 	switch val := pkt.Cmd.(type) {
 	case *mt.ToCltAcceptAuth:
 		l.SetField(tbl, "map_seed", lua.LNumber(val.MapSeed))
-		l.SetField(tbl, "player_pos", pushVec3(l, [3]lua.LNumber{lua.LNumber(val.PlayerPos[0]), lua.LNumber(val.PlayerPos[1]), lua.LNumber(val.PlayerPos[2])}))
+		l.SetField(tbl, "player_pos", PushVec3(l, [3]lua.LNumber{lua.LNumber(val.PlayerPos[0]), lua.LNumber(val.PlayerPos[1]), lua.LNumber(val.PlayerPos[2])}))
 		l.SetField(tbl, "send_interval", lua.LNumber(val.SendInterval))
-		l.SetField(tbl, "sudo_auth_methods", pushAuthMethods(l, val.SudoAuthMethods))
+		l.SetField(tbl, "sudo_auth_methods", PushAuthMethods(l, val.SudoAuthMethods))
 	case *mt.ToCltAddHUD:
-		l.SetField(tbl, "hud", pushHUD(l, val.HUD))
+		l.SetField(tbl, "hud", PushHUD(l, val.HUD))
 		l.SetField(tbl, "id", lua.LNumber(val.ID))
 	case *mt.ToCltAddNode:
 		l.SetField(tbl, "keep_meta", lua.LBool(val.KeepMeta))
-		l.SetField(tbl, "node", pushNode(l, val.Node))
-		l.SetField(tbl, "pos", pushVec3(l, [3]lua.LNumber{lua.LNumber(val.Pos[0]), lua.LNumber(val.Pos[1]), lua.LNumber(val.Pos[2])}))
+		l.SetField(tbl, "node", PushNode(l, val.Node))
+		l.SetField(tbl, "pos", PushVec3(l, [3]lua.LNumber{lua.LNumber(val.Pos[0]), lua.LNumber(val.Pos[1]), lua.LNumber(val.Pos[2])}))
 	case *mt.ToCltAddParticleSpawner:
-		l.SetField(tbl, "acc", pushBox3(l, [2][3]lua.LNumber{{lua.LNumber(val.Acc[0][0]), lua.LNumber(val.Acc[0][1]), lua.LNumber(val.Acc[0][2])}, {lua.LNumber(val.Acc[1][0]), lua.LNumber(val.Acc[1][1]), lua.LNumber(val.Acc[1][2])}}))
+		l.SetField(tbl, "acc", PushBox3(l, [2][3]lua.LNumber{{lua.LNumber(val.Acc[0][0]), lua.LNumber(val.Acc[0][1]), lua.LNumber(val.Acc[0][2])}, {lua.LNumber(val.Acc[1][0]), lua.LNumber(val.Acc[1][1]), lua.LNumber(val.Acc[1][2])}}))
 		l.SetField(tbl, "amount", lua.LNumber(val.Amount))
-		l.SetField(tbl, "anim_params", pushTileAnim(l, val.AnimParams))
+		l.SetField(tbl, "anim_params", PushTileAnim(l, val.AnimParams))
 		l.SetField(tbl, "ao_collision", lua.LBool(val.AOCollision))
 		l.SetField(tbl, "collide", lua.LBool(val.Collide))
 		l.SetField(tbl, "collision_rm", lua.LBool(val.CollisionRm))
 		l.SetField(tbl, "duration", lua.LNumber(val.Duration))
-		l.SetField(tbl, "expiration_time", pushBox1(l, [2]lua.LNumber{lua.LNumber(val.ExpirationTime[0]), lua.LNumber(val.ExpirationTime[1])}))
+		l.SetField(tbl, "expiration_time", PushBox1(l, [2]lua.LNumber{lua.LNumber(val.ExpirationTime[0]), lua.LNumber(val.ExpirationTime[1])}))
 		l.SetField(tbl, "glow", lua.LNumber(val.Glow))
 		l.SetField(tbl, "id", lua.LNumber(val.ID))
 		l.SetField(tbl, "node_param0", lua.LNumber(val.NodeParam0))
 		l.SetField(tbl, "node_param2", lua.LNumber(val.NodeParam2))
 		l.SetField(tbl, "node_tile", lua.LNumber(val.NodeTile))
-		l.SetField(tbl, "pos", pushBox3(l, [2][3]lua.LNumber{{lua.LNumber(val.Pos[0][0]), lua.LNumber(val.Pos[0][1]), lua.LNumber(val.Pos[0][2])}, {lua.LNumber(val.Pos[1][0]), lua.LNumber(val.Pos[1][1]), lua.LNumber(val.Pos[1][2])}}))
-		l.SetField(tbl, "size", pushBox1(l, [2]lua.LNumber{lua.LNumber(val.Size[0]), lua.LNumber(val.Size[1])}))
+		l.SetField(tbl, "pos", PushBox3(l, [2][3]lua.LNumber{{lua.LNumber(val.Pos[0][0]), lua.LNumber(val.Pos[0][1]), lua.LNumber(val.Pos[0][2])}, {lua.LNumber(val.Pos[1][0]), lua.LNumber(val.Pos[1][1]), lua.LNumber(val.Pos[1][2])}}))
+		l.SetField(tbl, "size", PushBox1(l, [2]lua.LNumber{lua.LNumber(val.Size[0]), lua.LNumber(val.Size[1])}))
 		l.SetField(tbl, "texture", lua.LString(string(val.Texture)))
-		l.SetField(tbl, "vel", pushBox3(l, [2][3]lua.LNumber{{lua.LNumber(val.Vel[0][0]), lua.LNumber(val.Vel[0][1]), lua.LNumber(val.Vel[0][2])}, {lua.LNumber(val.Vel[1][0]), lua.LNumber(val.Vel[1][1]), lua.LNumber(val.Vel[1][2])}}))
+		l.SetField(tbl, "vel", PushBox3(l, [2][3]lua.LNumber{{lua.LNumber(val.Vel[0][0]), lua.LNumber(val.Vel[0][1]), lua.LNumber(val.Vel[0][2])}, {lua.LNumber(val.Vel[1][0]), lua.LNumber(val.Vel[1][1]), lua.LNumber(val.Vel[1][2])}}))
 		l.SetField(tbl, "vertical", lua.LBool(val.Vertical))
 	case *mt.ToCltAddPlayerVel:
-		l.SetField(tbl, "vel", pushVec3(l, [3]lua.LNumber{lua.LNumber(val.Vel[0]), lua.LNumber(val.Vel[1]), lua.LNumber(val.Vel[2])}))
+		l.SetField(tbl, "vel", PushVec3(l, [3]lua.LNumber{lua.LNumber(val.Vel[0]), lua.LNumber(val.Vel[1]), lua.LNumber(val.Vel[2])}))
 	case *mt.ToCltBlkData:
-		l.SetField(tbl, "blkpos", pushVec3(l, [3]lua.LNumber{lua.LNumber(val.Blkpos[0]), lua.LNumber(val.Blkpos[1]), lua.LNumber(val.Blkpos[2])}))
+		l.SetField(tbl, "blk", PushMapBlk(l, val.Blk))
+		l.SetField(tbl, "blkpos", PushVec3(l, [3]lua.LNumber{lua.LNumber(val.Blkpos[0]), lua.LNumber(val.Blkpos[1]), lua.LNumber(val.Blkpos[2])}))
 	case *mt.ToCltBreath:
 		l.SetField(tbl, "breath", lua.LNumber(val.Breath))
 	case *mt.ToCltChangeHUD:
 		if val.Field == mt.HUDAlign {
-			l.SetField(tbl, "align", pushVec2(l, [2]lua.LNumber{lua.LNumber(val.Align[0]), lua.LNumber(val.Align[1])}))
+			l.SetField(tbl, "align", PushVec2(l, [2]lua.LNumber{lua.LNumber(val.Align[0]), lua.LNumber(val.Align[1])}))
 		}
 		if val.Field == mt.HUDDir {
 			l.SetField(tbl, "dir", lua.LNumber(val.Dir))
 		}
-		l.SetField(tbl, "field", pushHUDField(l, val.Field))
+		l.SetField(tbl, "field", PushHUDField(l, val.Field))
 		l.SetField(tbl, "id", lua.LNumber(val.ID))
 		if val.Field == mt.HUDItem {
 			l.SetField(tbl, "item", lua.LNumber(val.Item))
@@ -459,13 +467,13 @@ func PushPkt(l *lua.LState, pkt *mt.Pkt) lua.LValue {
 			l.SetField(tbl, "number", lua.LNumber(val.Number))
 		}
 		if val.Field == mt.HUDOffset {
-			l.SetField(tbl, "offset", pushVec2(l, [2]lua.LNumber{lua.LNumber(val.Offset[0]), lua.LNumber(val.Offset[1])}))
+			l.SetField(tbl, "offset", PushVec2(l, [2]lua.LNumber{lua.LNumber(val.Offset[0]), lua.LNumber(val.Offset[1])}))
 		}
 		if val.Field == mt.HUDPos {
-			l.SetField(tbl, "pos", pushVec2(l, [2]lua.LNumber{lua.LNumber(val.Pos[0]), lua.LNumber(val.Pos[1])}))
+			l.SetField(tbl, "pos", PushVec2(l, [2]lua.LNumber{lua.LNumber(val.Pos[0]), lua.LNumber(val.Pos[1])}))
 		}
 		if val.Field == mt.HUDSize {
-			l.SetField(tbl, "size", pushVec2(l, [2]lua.LNumber{lua.LNumber(val.Size[0]), lua.LNumber(val.Size[1])}))
+			l.SetField(tbl, "size", PushVec2(l, [2]lua.LNumber{lua.LNumber(val.Size[0]), lua.LNumber(val.Size[1])}))
 		}
 		if val.Field == mt.HUDText {
 			l.SetField(tbl, "text", lua.LString(string(val.Text)))
@@ -474,7 +482,7 @@ func PushPkt(l *lua.LState, pkt *mt.Pkt) lua.LValue {
 			l.SetField(tbl, "text_2", lua.LString(string(val.Text2)))
 		}
 		if val.Field == mt.HUDWorldPos {
-			l.SetField(tbl, "world_pos", pushVec3(l, [3]lua.LNumber{lua.LNumber(val.WorldPos[0]), lua.LNumber(val.WorldPos[1]), lua.LNumber(val.WorldPos[2])}))
+			l.SetField(tbl, "world_pos", PushVec3(l, [3]lua.LNumber{lua.LNumber(val.WorldPos[0]), lua.LNumber(val.WorldPos[1]), lua.LNumber(val.WorldPos[2])}))
 		}
 		if val.Field == mt.HUDZIndex {
 			l.SetField(tbl, "z_index", lua.LNumber(val.ZIndex))
@@ -483,19 +491,19 @@ func PushPkt(l *lua.LState, pkt *mt.Pkt) lua.LValue {
 		l.SetField(tbl, "sender", lua.LString(string(val.Sender)))
 		l.SetField(tbl, "text", lua.LString(string(val.Text)))
 		l.SetField(tbl, "timestamp", lua.LNumber(val.Timestamp))
-		l.SetField(tbl, "type", pushChatMsgType(l, val.Type))
+		l.SetField(tbl, "type", PushChatMsgType(l, val.Type))
 	case *mt.ToCltCloudParams:
-		l.SetField(tbl, "ambient_color", pushColor(l, val.AmbientColor))
+		l.SetField(tbl, "ambient_color", PushColor(l, val.AmbientColor))
 		l.SetField(tbl, "density", lua.LNumber(val.Density))
-		l.SetField(tbl, "diffuse_color", pushColor(l, val.DiffuseColor))
+		l.SetField(tbl, "diffuse_color", PushColor(l, val.DiffuseColor))
 		l.SetField(tbl, "height", lua.LNumber(val.Height))
-		l.SetField(tbl, "speed", pushVec2(l, [2]lua.LNumber{lua.LNumber(val.Speed[0]), lua.LNumber(val.Speed[1])}))
+		l.SetField(tbl, "speed", PushVec2(l, [2]lua.LNumber{lua.LNumber(val.Speed[0]), lua.LNumber(val.Speed[1])}))
 		l.SetField(tbl, "thickness", lua.LNumber(val.Thickness))
 	case *mt.ToCltCSMRestrictionFlags:
-		l.SetField(tbl, "flags", pushCSMRestrictionFlags(l, val.Flags))
+		l.SetField(tbl, "flags", PushCSMRestrictionFlags(l, val.Flags))
 		l.SetField(tbl, "map_range", lua.LNumber(val.MapRange))
 	case *mt.ToCltDeathScreen:
-		l.SetField(tbl, "point_at", pushVec3(l, [3]lua.LNumber{lua.LNumber(val.PointAt[0]), lua.LNumber(val.PointAt[1]), lua.LNumber(val.PointAt[2])}))
+		l.SetField(tbl, "point_at", PushVec3(l, [3]lua.LNumber{lua.LNumber(val.PointAt[0]), lua.LNumber(val.PointAt[1]), lua.LNumber(val.PointAt[2])}))
 		l.SetField(tbl, "point_cam", lua.LBool(val.PointCam))
 	case *mt.ToCltDelParticleSpawner:
 		l.SetField(tbl, "id", lua.LNumber(val.ID))
@@ -505,8 +513,8 @@ func PushPkt(l *lua.LState, pkt *mt.Pkt) lua.LValue {
 		l.SetField(tbl, "len", lua.LNumber(val.Len))
 		l.SetField(tbl, "name", lua.LString(string(val.Name)))
 	case *mt.ToCltEyeOffset:
-		l.SetField(tbl, "first", pushVec3(l, [3]lua.LNumber{lua.LNumber(val.First[0]), lua.LNumber(val.First[1]), lua.LNumber(val.First[2])}))
-		l.SetField(tbl, "third", pushVec3(l, [3]lua.LNumber{lua.LNumber(val.Third[0]), lua.LNumber(val.Third[1]), lua.LNumber(val.Third[2])}))
+		l.SetField(tbl, "first", PushVec3(l, [3]lua.LNumber{lua.LNumber(val.First[0]), lua.LNumber(val.First[1]), lua.LNumber(val.First[2])}))
+		l.SetField(tbl, "third", PushVec3(l, [3]lua.LNumber{lua.LNumber(val.Third[0]), lua.LNumber(val.Third[1]), lua.LNumber(val.Third[2])}))
 	case *mt.ToCltFadeSound:
 		l.SetField(tbl, "gain", lua.LNumber(val.Gain))
 		l.SetField(tbl, "id", lua.LNumber(val.ID))
@@ -518,7 +526,7 @@ func PushPkt(l *lua.LState, pkt *mt.Pkt) lua.LValue {
 		l.SetField(tbl, "multiplier", lua.LBool(val.Multiplier))
 		l.SetField(tbl, "transition_time", lua.LNumber(val.TransitionTime))
 	case *mt.ToCltHello:
-		l.SetField(tbl, "auth_methods", pushAuthMethods(l, val.AuthMethods))
+		l.SetField(tbl, "auth_methods", PushAuthMethods(l, val.AuthMethods))
 		l.SetField(tbl, "compression", lua.LNumber(val.Compression))
 		l.SetField(tbl, "proto_ver", lua.LNumber(val.ProtoVer))
 		l.SetField(tbl, "serialize_ver", lua.LNumber(val.SerializeVer))
@@ -526,8 +534,8 @@ func PushPkt(l *lua.LState, pkt *mt.Pkt) lua.LValue {
 	case *mt.ToCltHP:
 		l.SetField(tbl, "hp", lua.LNumber(val.HP))
 	case *mt.ToCltHUDFlags:
-		l.SetField(tbl, "flags", pushHUDFlags(l, val.Flags))
-		l.SetField(tbl, "mask", pushHUDFlags(l, val.Mask))
+		l.SetField(tbl, "flags", PushHUDFlags(l, val.Flags))
+		l.SetField(tbl, "mask", PushHUDFlags(l, val.Mask))
 	case *mt.ToCltInv:
 		l.SetField(tbl, "inv", lua.LString(string(val.Inv)))
 	case *mt.ToCltInvFormspec:
@@ -536,18 +544,18 @@ func PushPkt(l *lua.LState, pkt *mt.Pkt) lua.LValue {
 		if val.Reason == mt.Custom || val.Reason == mt.Shutdown || val.Reason == mt.Crash {
 			l.SetField(tbl, "custom", lua.LString(string(val.Custom)))
 		}
-		l.SetField(tbl, "reason", pushKickReason(l, val.Reason))
+		l.SetField(tbl, "reason", PushKickReason(l, val.Reason))
 		if val.Reason == mt.Shutdown || val.Reason == mt.Crash {
 			l.SetField(tbl, "reconnect", lua.LBool(val.Reconnect))
 		}
 	case *mt.ToCltLegacyKick:
 		l.SetField(tbl, "reason", lua.LString(string(val.Reason)))
 	case *mt.ToCltLocalPlayerAnim:
-		l.SetField(tbl, "dig", pushBox1(l, [2]lua.LNumber{lua.LNumber(val.Dig[0]), lua.LNumber(val.Dig[1])}))
-		l.SetField(tbl, "idle", pushBox1(l, [2]lua.LNumber{lua.LNumber(val.Idle[0]), lua.LNumber(val.Idle[1])}))
+		l.SetField(tbl, "dig", PushBox1(l, [2]lua.LNumber{lua.LNumber(val.Dig[0]), lua.LNumber(val.Dig[1])}))
+		l.SetField(tbl, "idle", PushBox1(l, [2]lua.LNumber{lua.LNumber(val.Idle[0]), lua.LNumber(val.Idle[1])}))
 		l.SetField(tbl, "speed", lua.LNumber(val.Speed))
-		l.SetField(tbl, "walk", pushBox1(l, [2]lua.LNumber{lua.LNumber(val.Walk[0]), lua.LNumber(val.Walk[1])}))
-		l.SetField(tbl, "walk_dig", pushBox1(l, [2]lua.LNumber{lua.LNumber(val.WalkDig[0]), lua.LNumber(val.WalkDig[1])}))
+		l.SetField(tbl, "walk", PushBox1(l, [2]lua.LNumber{lua.LNumber(val.Walk[0]), lua.LNumber(val.Walk[1])}))
+		l.SetField(tbl, "walk_dig", PushBox1(l, [2]lua.LNumber{lua.LNumber(val.WalkDig[0]), lua.LNumber(val.WalkDig[1])}))
 	case *mt.ToCltMediaPush:
 		l.SetField(tbl, "data", lua.LString(string(val.Data)))
 		l.SetField(tbl, "filename", lua.LString(string(val.Filename)))
@@ -559,7 +567,7 @@ func PushPkt(l *lua.LState, pkt *mt.Pkt) lua.LValue {
 		l.SetField(tbl, "sender", lua.LString(string(val.Sender)))
 	case *mt.ToCltModChanSig:
 		l.SetField(tbl, "channel", lua.LString(string(val.Channel)))
-		l.SetField(tbl, "signal", pushModChanSig(l, val.Signal))
+		l.SetField(tbl, "signal", PushModChanSig(l, val.Signal))
 	case *mt.ToCltMoonParams:
 		l.SetField(tbl, "size", lua.LNumber(val.Size))
 		l.SetField(tbl, "texture", lua.LString(string(val.Texture)))
@@ -567,7 +575,7 @@ func PushPkt(l *lua.LState, pkt *mt.Pkt) lua.LValue {
 		l.SetField(tbl, "visible", lua.LBool(val.Visible))
 	case *mt.ToCltMovePlayer:
 		l.SetField(tbl, "pitch", lua.LNumber(val.Pitch))
-		l.SetField(tbl, "pos", pushVec3(l, [3]lua.LNumber{lua.LNumber(val.Pos[0]), lua.LNumber(val.Pos[1]), lua.LNumber(val.Pos[2])}))
+		l.SetField(tbl, "pos", PushVec3(l, [3]lua.LNumber{lua.LNumber(val.Pos[0]), lua.LNumber(val.Pos[1]), lua.LNumber(val.Pos[2])}))
 		l.SetField(tbl, "yaw", lua.LNumber(val.Yaw))
 	case *mt.ToCltMovement:
 		l.SetField(tbl, "air_accel", lua.LNumber(val.AirAccel))
@@ -582,6 +590,8 @@ func PushPkt(l *lua.LState, pkt *mt.Pkt) lua.LValue {
 		l.SetField(tbl, "sink", lua.LNumber(val.Sink))
 		l.SetField(tbl, "smoothing", lua.LNumber(val.Smoothing))
 		l.SetField(tbl, "walk_speed", lua.LNumber(val.WalkSpeed))
+	case *mt.ToCltNodeMetasChanged:
+		l.SetField(tbl, "changed", PushChangedNodeMetas(l, val.Changed))
 	case *mt.ToCltOverrideDayNightRatio:
 		l.SetField(tbl, "override", lua.LBool(val.Override))
 		l.SetField(tbl, "ratio", lua.LNumber(val.Ratio))
@@ -593,56 +603,56 @@ func PushPkt(l *lua.LState, pkt *mt.Pkt) lua.LValue {
 		l.SetField(tbl, "loop", lua.LBool(val.Loop))
 		l.SetField(tbl, "name", lua.LString(string(val.Name)))
 		l.SetField(tbl, "pitch", lua.LNumber(val.Pitch))
-		l.SetField(tbl, "pos", pushVec3(l, [3]lua.LNumber{lua.LNumber(val.Pos[0]), lua.LNumber(val.Pos[1]), lua.LNumber(val.Pos[2])}))
+		l.SetField(tbl, "pos", PushVec3(l, [3]lua.LNumber{lua.LNumber(val.Pos[0]), lua.LNumber(val.Pos[1]), lua.LNumber(val.Pos[2])}))
 		l.SetField(tbl, "src_aoid", lua.LNumber(val.SrcAOID))
-		l.SetField(tbl, "src_type", pushSoundSrcType(l, val.SrcType))
+		l.SetField(tbl, "src_type", PushSoundSrcType(l, val.SrcType))
 	case *mt.ToCltPrivs:
-		l.SetField(tbl, "privs", pushStringSet(l, val.Privs))
+		l.SetField(tbl, "privs", PushStringSet(l, val.Privs))
 	case *mt.ToCltRemoveNode:
-		l.SetField(tbl, "pos", pushVec3(l, [3]lua.LNumber{lua.LNumber(val.Pos[0]), lua.LNumber(val.Pos[1]), lua.LNumber(val.Pos[2])}))
+		l.SetField(tbl, "pos", PushVec3(l, [3]lua.LNumber{lua.LNumber(val.Pos[0]), lua.LNumber(val.Pos[1]), lua.LNumber(val.Pos[2])}))
 	case *mt.ToCltRmHUD:
 		l.SetField(tbl, "id", lua.LNumber(val.ID))
 	case *mt.ToCltSetHotbarParam:
 		l.SetField(tbl, "img", lua.LString(string(val.Img)))
-		l.SetField(tbl, "param", pushHotbarParam(l, val.Param))
+		l.SetField(tbl, "param", PushHotbarParam(l, val.Param))
 		l.SetField(tbl, "size", lua.LNumber(val.Size))
 	case *mt.ToCltShowFormspec:
 		l.SetField(tbl, "formname", lua.LString(string(val.Formname)))
 		l.SetField(tbl, "formspec", lua.LString(string(val.Formspec)))
 	case *mt.ToCltSkyParams:
-		l.SetField(tbl, "bg_color", pushColor(l, val.BgColor))
+		l.SetField(tbl, "bg_color", PushColor(l, val.BgColor))
 		l.SetField(tbl, "clouds", lua.LBool(val.Clouds))
 		if val.Type == "regular" {
-			l.SetField(tbl, "dawn_horizon", pushColor(l, val.DawnHorizon))
+			l.SetField(tbl, "dawn_horizon", PushColor(l, val.DawnHorizon))
 		}
 		if val.Type == "regular" {
-			l.SetField(tbl, "dawn_sky", pushColor(l, val.DawnSky))
+			l.SetField(tbl, "dawn_sky", PushColor(l, val.DawnSky))
 		}
 		if val.Type == "regular" {
-			l.SetField(tbl, "day_horizon", pushColor(l, val.DayHorizon))
+			l.SetField(tbl, "day_horizon", PushColor(l, val.DayHorizon))
 		}
 		if val.Type == "regular" {
-			l.SetField(tbl, "day_sky", pushColor(l, val.DaySky))
+			l.SetField(tbl, "day_sky", PushColor(l, val.DaySky))
 		}
 		l.SetField(tbl, "fog_tint_type", lua.LString(string(val.FogTintType)))
 		if val.Type == "regular" {
-			l.SetField(tbl, "indoor", pushColor(l, val.Indoor))
+			l.SetField(tbl, "indoor", PushColor(l, val.Indoor))
 		}
-		l.SetField(tbl, "moon_fog_tint", pushColor(l, val.MoonFogTint))
+		l.SetField(tbl, "moon_fog_tint", PushColor(l, val.MoonFogTint))
 		if val.Type == "regular" {
-			l.SetField(tbl, "night_horizon", pushColor(l, val.NightHorizon))
+			l.SetField(tbl, "night_horizon", PushColor(l, val.NightHorizon))
 		}
 		if val.Type == "regular" {
-			l.SetField(tbl, "night_sky", pushColor(l, val.NightSky))
+			l.SetField(tbl, "night_sky", PushColor(l, val.NightSky))
 		}
-		l.SetField(tbl, "sun_fog_tint", pushColor(l, val.SunFogTint))
+		l.SetField(tbl, "sun_fog_tint", PushColor(l, val.SunFogTint))
 		if val.Type == "skybox" {
-			l.SetField(tbl, "textures", pushTextureList(l, val.Textures))
+			l.SetField(tbl, "textures", PushStringList[mt.Texture](l, val.Textures))
 		}
 		l.SetField(tbl, "type", lua.LString(string(val.Type)))
 	case *mt.ToCltSpawnParticle:
-		l.SetField(tbl, "acc", pushVec3(l, [3]lua.LNumber{lua.LNumber(val.Acc[0]), lua.LNumber(val.Acc[1]), lua.LNumber(val.Acc[2])}))
-		l.SetField(tbl, "anim_params", pushTileAnim(l, val.AnimParams))
+		l.SetField(tbl, "acc", PushVec3(l, [3]lua.LNumber{lua.LNumber(val.Acc[0]), lua.LNumber(val.Acc[1]), lua.LNumber(val.Acc[2])}))
+		l.SetField(tbl, "anim_params", PushTileAnim(l, val.AnimParams))
 		l.SetField(tbl, "ao_collision", lua.LBool(val.AOCollision))
 		l.SetField(tbl, "collide", lua.LBool(val.Collide))
 		l.SetField(tbl, "collision_rm", lua.LBool(val.CollisionRm))
@@ -651,16 +661,16 @@ func PushPkt(l *lua.LState, pkt *mt.Pkt) lua.LValue {
 		l.SetField(tbl, "node_param0", lua.LNumber(val.NodeParam0))
 		l.SetField(tbl, "node_param2", lua.LNumber(val.NodeParam2))
 		l.SetField(tbl, "node_tile", lua.LNumber(val.NodeTile))
-		l.SetField(tbl, "pos", pushVec3(l, [3]lua.LNumber{lua.LNumber(val.Pos[0]), lua.LNumber(val.Pos[1]), lua.LNumber(val.Pos[2])}))
+		l.SetField(tbl, "pos", PushVec3(l, [3]lua.LNumber{lua.LNumber(val.Pos[0]), lua.LNumber(val.Pos[1]), lua.LNumber(val.Pos[2])}))
 		l.SetField(tbl, "size", lua.LNumber(val.Size))
 		l.SetField(tbl, "texture", lua.LString(string(val.Texture)))
-		l.SetField(tbl, "vel", pushVec3(l, [3]lua.LNumber{lua.LNumber(val.Vel[0]), lua.LNumber(val.Vel[1]), lua.LNumber(val.Vel[2])}))
+		l.SetField(tbl, "vel", PushVec3(l, [3]lua.LNumber{lua.LNumber(val.Vel[0]), lua.LNumber(val.Vel[1]), lua.LNumber(val.Vel[2])}))
 		l.SetField(tbl, "vertical", lua.LBool(val.Vertical))
 	case *mt.ToCltSRPBytesSaltB:
 		l.SetField(tbl, "b", lua.LString(string(val.B)))
 		l.SetField(tbl, "salt", lua.LString(string(val.Salt)))
 	case *mt.ToCltStarParams:
-		l.SetField(tbl, "color", pushColor(l, val.Color))
+		l.SetField(tbl, "color", PushColor(l, val.Color))
 		l.SetField(tbl, "count", lua.LNumber(val.Count))
 		l.SetField(tbl, "size", lua.LNumber(val.Size))
 		l.SetField(tbl, "visible", lua.LBool(val.Visible))
@@ -677,8 +687,8 @@ func PushPkt(l *lua.LState, pkt *mt.Pkt) lua.LValue {
 		l.SetField(tbl, "speed", lua.LNumber(val.Speed))
 		l.SetField(tbl, "time", lua.LNumber(val.Time))
 	case *mt.ToCltUpdatePlayerList:
-		l.SetField(tbl, "players", pushStringList(l, val.Players))
-		l.SetField(tbl, "type", pushPlayerListUpdateType(l, val.Type))
+		l.SetField(tbl, "players", PushStringList[string](l, val.Players))
+		l.SetField(tbl, "type", PushPlayerListUpdateType(l, val.Type))
 	}
 	return tbl
 }

@@ -5,7 +5,7 @@ local funcs = ""
 
 for name, fields in spairs(parse_spec("client/enum")) do
 	local camel = camel_case(name)
-	funcs = funcs .. "func push" .. camel .. "(l *lua.LState, val mt." .. camel .. ") lua.LValue {\n\tswitch val {\n"
+	funcs = funcs .. "func Push" .. camel .. "(l *lua.LState, val mt." .. camel .. ") lua.LValue {\n\tswitch val {\n"
 
 	for _, var in ipairs(fields) do
 		funcs = funcs .. "\tcase mt." .. apply_prefix(fields, var) .. ":\n\t\t" ..
@@ -17,11 +17,10 @@ end
 
 for name, fields in spairs(parse_spec("client/flag")) do
 	local camel = camel_case(name)
-	funcs = funcs .. "func push" .. camel .. "(l *lua.LState, val mt." .. camel .. ") lua.LValue {\n\ttbl := l.NewTable()\n"
+	funcs = funcs .. "func Push" .. camel .. "(l *lua.LState, val mt." .. camel .. ") lua.LValue {\n\ttbl := l.NewTable()\n"
 
 	for _, var in ipairs(fields) do
-		funcs = funcs .. "\tif val&mt." .. apply_prefix(fields, var)
-			.. " != 0 {\n\t\tl.SetField(tbl, \"" .. var  .. "\", lua.LTrue)\n\t}\n"
+		funcs = funcs .. "\tl.SetField(tbl, \"" .. var  .. "\", lua.LBool(val&mt." .. apply_prefix(fields, var) .. " != 0))\n"
 	end
 
 	funcs = funcs .. "\treturn tbl\n}\n\n"
@@ -32,22 +31,24 @@ local tolua = {
 	fixed_string = "lua.LString(string(VAL[:]))",
 	boolean = "lua.LBool(VAL)",
 	number = "lua.LNumber(VAL)",
-	vec2 = "pushVec2(l, [2]lua.LNumber{lua.LNumber(VAL[0]), lua.LNumber(VAL[1])})",
-	vec3 = "pushVec3(l, [3]lua.LNumber{lua.LNumber(VAL[0]), lua.LNumber(VAL[1]), lua.LNumber(VAL[2])})",
-	box1 = "pushBox1(l, [2]lua.LNumber{lua.LNumber(VAL[0]), lua.LNumber(VAL[1])})",
-	box2 = "pushBox2(l, [2][2]lua.LNumber{{lua.LNumber(VAL[0][0]), lua.LNumber(VAL[0][1])}, {lua.LNumber(VAL[1][0]), lua.LNumber(VAL[1][1])}})",
-	box3 = "pushBox3(l, [2][3]lua.LNumber{{lua.LNumber(VAL[0][0]), lua.LNumber(VAL[0][1]), lua.LNumber(VAL[0][2])}, {lua.LNumber(VAL[1][0]), lua.LNumber(VAL[1][1]), lua.LNumber(VAL[1][2])}})",
+	vec2 = "PushVec2(l, [2]lua.LNumber{lua.LNumber(VAL[0]), lua.LNumber(VAL[1])})",
+	vec3 = "PushVec3(l, [3]lua.LNumber{lua.LNumber(VAL[0]), lua.LNumber(VAL[1]), lua.LNumber(VAL[2])})",
+	box1 = "PushBox1(l, [2]lua.LNumber{lua.LNumber(VAL[0]), lua.LNumber(VAL[1])})",
+	box2 = "PushBox2(l, [2][2]lua.LNumber{{lua.LNumber(VAL[0][0]), lua.LNumber(VAL[0][1])}, {lua.LNumber(VAL[1][0]), lua.LNumber(VAL[1][1])}})",
+	box3 = "PushBox3(l, [2][3]lua.LNumber{{lua.LNumber(VAL[0][0]), lua.LNumber(VAL[0][1]), lua.LNumber(VAL[0][2])}, {lua.LNumber(VAL[1][0]), lua.LNumber(VAL[1][1]), lua.LNumber(VAL[1][2])}})",
 }
 
 local function fields_tolua(fields, indent)
 	local impl = ""
 
 	for name, type in spairs(fields) do
-		if name:sub(1, 1) ~= "{" then
+		local c = name:sub(1, 1)
+		if c ~= "{" and c ~= "%" then
 			local camel = "val." .. camel_case(name)
 
 			local idt = indent
 			local condition = fields["{" .. name .. "}"]
+			local typeparam = fields["%" .. name .. "%"]
 
 			if condition then
 				impl = impl .. indent .. "if " .. condition .. " {\n"
@@ -58,7 +59,9 @@ local function fields_tolua(fields, indent)
 			if tolua[type] then
 				impl = impl .. tolua[type]:gsub("VAL", camel)
 			else
-				impl = impl .. "push" .. camel_case(type) .. "(l, " .. camel .. ")"
+				impl = impl .. "Push" .. camel_case(type)
+					.. (typeparam and "[" .. typeparam .. "]" or "")
+					.. "(l, " .. camel .. ")"
 			end
 			impl = impl .. ")\n"
 
@@ -74,7 +77,7 @@ end
 for name, fields in spairs(parse_spec("client/struct", true)) do
 	local camel = camel_case(name)
 	funcs = funcs
-		.. "func push" .. camel .. "(l *lua.LState, val mt." .. camel .. ") lua.LValue {\n\ttbl := l.NewTable()\n"
+		.. "func Push" .. camel .. "(l *lua.LState, val mt." .. camel .. ") lua.LValue {\n\ttbl := l.NewTable()\n"
 		.. fields_tolua(fields, "\t")
 		.. "\treturn tbl\n}\n\n"
 end

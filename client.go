@@ -212,6 +212,8 @@ func l_client_enable(l *lua.LState) int {
 			switch compname {
 			case "auth":
 				component = &Auth{}
+			case "map":
+				component = &Map{}
 			default:
 				panic("invalid component: " + compname)
 			}

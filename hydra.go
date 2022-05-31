@@ -28,11 +28,15 @@ var builtinEscapes string
 //go:embed builtin/client.lua
 var builtinClient string
 
+//go:embed builtin/base64.lua
+var builtinBase64 string
+
 var builtinFiles = []string{
 	builtinLuaX,
 	builtinVector,
 	builtinEscapes,
 	builtinClient,
+	builtinBase64,
 }
 
 var hydraFuncs = map[string]lua.LGFunction{
@@ -107,6 +111,7 @@ func main() {
 
 	l.SetField(l.NewTypeMetatable("hydra.auth"), "__index", l.SetFuncs(l.NewTable(), authFuncs))
 	l.SetField(l.NewTypeMetatable("hydra.client"), "__index", l.NewFunction(l_client_index))
+	l.SetField(l.NewTypeMetatable("hydra.map"), "__index", l.SetFuncs(l.NewTable(), mapFuncs))
 
 	for _, str := range builtinFiles {
 		if err := l.DoString(str); err != nil {

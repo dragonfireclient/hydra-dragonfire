@@ -2,7 +2,7 @@
 -- code taken from minetest/builtin/common/misc_helpers.lua with modifications
 
 local escapes = {}
-package.loaded["escapes"] = escapes
+package.loaded.escapes = escapes
 
 escapes.ESCAPE_CHAR = string.char(0x1b)
 

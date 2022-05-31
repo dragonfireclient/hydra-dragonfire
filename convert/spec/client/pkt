@@ -19,7 +19,7 @@ kick
 	boolean reconnect
 blk_data
 	vec3 blkpos
-	# TODO
+	map_blk blk
 add_node
 	vec3 pos
 	node node
@@ -195,7 +195,8 @@ sky_params
 	color moon_fog_tint
 	string fog_tint_type
 	{textures} val.Type == "skybox"
-	texture_list textures
+	%textures% mt.Texture
+	string_list textures
 	{day_sky} val.Type == "regular"
 	{day_horizon} val.Type == "regular"
 	{dawn_sky} val.Type == "regular"
@@ -237,6 +238,7 @@ fade_sound
 	number gain
 update_player_list
 	player_list_update_type type
+	%players% string
 	string_list players
 mod_chan_msg
 	string channel
@@ -246,7 +248,7 @@ mod_chan_sig
 	mod_chan_sig signal
 	string channel
 node_metas_changed
-	# TODO
+	changed_node_metas changed
 sun_params
 	boolean visible
 	string texture

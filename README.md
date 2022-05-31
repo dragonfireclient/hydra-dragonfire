@@ -27,7 +27,7 @@ Only selected packets will be returned by `poll`, to avoid unnecessary conversio
 Poll will return early if the script is interrupted by a signal, one of the selected clients is disconnected or the configured timeout elapses.
 
 Additionally, different native components can be enabled per-client to manage state.
-Currently only the `auth` component is available, but components like `map`, `objs`, `inv`, `pos`, `playerlist` etc. will be added in the future.
+Currently `auth` and `map` components are available, and components like `objs`, `inv`, `pos`, `player_list` etc. will be added in the future.
 Components handle packets asynchronously, they will process them even if poll is not called.
 
 # Further Documentation

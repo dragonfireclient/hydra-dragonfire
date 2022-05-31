@@ -22,3 +22,4 @@ After being disconnect, a client cannot be reconnected.
 Enabled components can be accessed by using `self.<component name>`.
 
 - `self.auth`: Handles authentication. Recommended for the vast majority of scripts. See [auth.md](auth.md).
+- `self.map`: Stores MapBlocks received from server. See [map.md](map.md).

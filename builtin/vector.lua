@@ -43,7 +43,10 @@ mt_vec2.__index = {
 		assert(type(self.x) == "number")
 		assert(type(self.y) == "number")
 		return self
-	end
+	end,
+	round = function(self)
+		return vec2(math.round(self.x), math.round(self.y))
+	end,
 }
 
 function vec2(a, b)
@@ -91,7 +94,10 @@ mt_vec3.__index = {
 		assert(type(self.y) == "number")
 		assert(type(self.z) == "number")
 		return self
-	end
+	end,
+	round = function(self)
+		return vec3(math.floor(self.x), math.floor(self.y), math.floor(self.z))
+	end,
 }
 
 function vec3(a, b, c)

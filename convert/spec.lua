@@ -40,8 +40,9 @@ local function parse_pair(pair, value_first)
 
 	if idx then
 		local first, second = pair:sub(1, idx - 1), pair:sub(idx + 1)
+		local c = first:sub(1, 1)
 
-		if value_first and first:sub(1, 1) ~= "{" then
+		if value_first and c ~= "{" and c ~= "%" then
 			return second, first
 		else
 			return first, second
@@ -52,7 +53,7 @@ local function parse_pair(pair, value_first)
 end
 
 function parse_spec(name, value_first)
-	local f = io.open("../spec/" .. name, "r")
+	local f = io.open("spec/" .. name, "r")
 	local spec = {}
 	local top
 
