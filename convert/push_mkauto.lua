@@ -120,7 +120,6 @@ func PushPkt(l *lua.LState, pkt *mt.Pkt) lua.LValue {
 		return lua.LNil
 	}
 	tbl := l.NewTable()
-	l.SetField(tbl, "_type", PushPktType(pkt))
 	switch val := pkt.Cmd.(type) {
 ]] .. pkt_impl .. [[
 	}

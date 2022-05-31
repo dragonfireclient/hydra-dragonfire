@@ -3,7 +3,9 @@ local escapes = require("escapes")
 local base64 = require("base64")
 local client = require("client")()
 
-client:wildcard(true)
+client:enable("pkts")
+client.pkts:wildcard(true)
+
 client:connect()
 
 local function dump(val, indent)
@@ -16,41 +18,43 @@ local function dump(val, indent)
 		end
 		print(val)
 	else
-		print(val._type or "")
+		print()
 
 		local idt = (indent or "") .. "  "
 		for k, v in pairs(val) do
-			if k ~= "_type" then
-				io.write(idt .. k .. " ")
-				dump(v, idt)
-			end
+			io.write(idt .. k .. " ")
+			dump(v, idt)
 		end
 	end
 end
 
-while not hydra.canceled() do
-	local pkt, interrupt = client:poll()
+while true do
+	local evt = client:poll()
 
-	if pkt then
-		if pkt._type == "srp_bytes_salt_b" then
-			pkt.b = base64.encode(pkt.b)
-			pkt.salt = base64.encode(pkt.salt)
-		end
-
-		if pkt._type == "chat_msg" then
-			pkt.text = escapes.strip_all(pkt.text)
-		end
-
-		if pkt._type == "blk_data" then
-			pkt.blk.param0 = {}
-			pkt.blk.param1 = {}
-			pkt.blk.param2 = {}
-		end
-
-		dump(pkt)
-	elseif not interrupt then
-		print("disconnected")
+	if not evt or evt.type == "disconnect" or evt.type == "interrupt" then
 		break
+	elseif evt.type == "error" then
+		print(evt.error)
+	elseif evt.type == "pkt" then
+		local type, data = evt.pkt_type, evt.pkt_data
+
+		if type == "srp_bytes_salt_b" then
+			data.b = base64.encode(data.b)
+			data.salt = base64.encode(data.salt)
+		end
+
+		if type == "chat_msg" then
+			data.text = escapes.strip_all(data.text)
+		end
+
+		if type == "blk_data" then
+			data.blk.param0 = {}
+			data.blk.param1 = {}
+			data.blk.param2 = {}
+		end
+
+		io.write(type)
+		dump(data)
 	end
 end
 

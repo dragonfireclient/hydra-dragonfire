@@ -1,21 +1,30 @@
 package main
 
 import (
-	"github.com/anon55555/mt"
 	"github.com/yuin/gopher-lua"
 	"reflect"
 	"time"
 )
 
-func doPoll(l *lua.LState, clients []*Client) (*Client, *mt.Pkt, bool) {
-	var timeout time.Duration
-	hasTimeout := false
-	if l.GetTop() > 1 {
-		timeout = time.Duration(float64(l.ToNumber(2)) * float64(time.Second))
-		hasTimeout = true
-	}
+type Event interface {
+	handle(l *lua.LState, val lua.LValue)
+}
 
+type EventTimeout struct{}
+
+func (evt EventTimeout) handle(l *lua.LState, val lua.LValue) {
+	l.SetField(val, "type", lua.LString("timeout"))
+}
+
+type EventInterrupt struct{}
+
+func (evt EventInterrupt) handle(l *lua.LState, val lua.LValue) {
+	l.SetField(val, "type", lua.LString("interrupt"))
+}
+
+func doPoll(l *lua.LState, clients []*Client) int {
 	cases := make([]reflect.SelectCase, 0, len(clients)+2)
+
 	for _, client := range clients {
 		if client.state != csConnected {
 			continue
@@ -30,35 +39,39 @@ func doPoll(l *lua.LState, clients []*Client) (*Client, *mt.Pkt, bool) {
 	offset := len(cases)
 
 	if offset < 1 {
-		return nil, nil, false
+		return 0
 	}
 
 	cases = append(cases, reflect.SelectCase{
 		Dir:  reflect.SelectRecv,
-		Chan: reflect.ValueOf(signalChannel()),
+		Chan: reflect.ValueOf(signalChannel),
 	})
 
-	if hasTimeout {
+	if l.GetTop() > 1 {
+		timeout := time.After(time.Duration(float64(l.ToNumber(2)) * float64(time.Second)))
+
 		cases = append(cases, reflect.SelectCase{
 			Dir:  reflect.SelectRecv,
-			Chan: reflect.ValueOf(time.After(timeout)),
+			Chan: reflect.ValueOf(timeout),
 		})
 	}
 
-	idx, value, ok := reflect.Select(cases)
+	idx, value, _ := reflect.Select(cases)
 
-	if idx >= offset {
-		return nil, nil, true
-	}
+	var evt Event
+	tbl := l.NewTable()
 
-	client := clients[idx]
-
-	var pkt *mt.Pkt = nil
-	if ok {
-		pkt = value.Interface().(*mt.Pkt)
+	if idx > offset {
+		evt = EventTimeout{}
+	} else if idx == offset {
+		evt = EventInterrupt{}
 	} else {
-		client.state = csDisconnected
+		evt = value.Interface().(Event)
+		l.SetField(tbl, "client", clients[idx].userdata)
 	}
 
-	return client, pkt, false
+	evt.handle(l, tbl)
+
+	l.Push(tbl)
+	return 1
 }

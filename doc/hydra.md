@@ -13,6 +13,5 @@ The `hydra` table contains functions necessary to handle connections.
 
 - `hydra.client(address)`: Returns a new client. Address must be a string. For client functions, see [client.md](client.md).
 - `hydra.dtime()`: Utility function that turns the elapsed time in seconds (floating point) since it was last called (or since program start).
-- `hydra.canceled()`: Utility function that returns true if the program was interrupted (SIGINT, SIGTERM, SIGHUP).
-- `hydra.poll(clients, [timeout])`: Polls subscribed packets from all clients in `clients` (table). For behavior and return value, see [poll.md](poll.md).
+- `hydra.poll(clients, [timeout])`: Polls events from all clients in `clients` (table). For behavior and return value, see [poll.md](poll.md).
 - `hydra.close(clients)`: Closes all clients in `clients` (table) that are currently connected. See `client:close()` in [client.md](client.md) for more info.

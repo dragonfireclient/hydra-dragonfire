@@ -2,19 +2,24 @@
 local escapes = require("escapes")
 local client = require("client")()
 
-client:subscribe("chat_msg")
+client:enable("pkts")
+client.pkts:subscribe("chat_msg")
+
 client:connect()
 
-while not hydra.canceled() do
-	local pkt, interrupt = client:poll(1)
+while true do
+	local evt = client:poll(1)
 
-	if pkt then
-		print(escapes.strip_all(pkt.text))
-	elseif interrupt then
-		client:send("chat_msg", {msg = "test"})
-	else
-		print("disconnected")
+	if not evt then
 		break
+	end
+
+	if not evt or evt.type == "interrupt" or evt.type == "disconnect" then
+		break
+	elseif evt.type == "pkt" then
+		print(escapes.strip_all(evt.pkt_data.text))
+	elseif evt.type == "timeout" then
+		client:send("chat_msg", {msg = "test"})
 	end
 end
 

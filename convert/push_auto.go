@@ -408,7 +408,6 @@ func PushPkt(l *lua.LState, pkt *mt.Pkt) lua.LValue {
 		return lua.LNil
 	}
 	tbl := l.NewTable()
-	l.SetField(tbl, "_type", PushPktType(pkt))
 	switch val := pkt.Cmd.(type) {
 	case *mt.ToCltAcceptAuth:
 		l.SetField(tbl, "map_seed", lua.LNumber(val.MapSeed))

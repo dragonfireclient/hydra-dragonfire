@@ -29,24 +29,38 @@ type Client struct {
 	address    string
 	state      clientState
 	conn       mt.Peer
-	queue      chan *mt.Pkt
-	wildcard   bool
-	subscribed map[string]struct{}
+	queue      chan Event
 	components map[string]Component
+	table      *lua.LTable
 	userdata   *lua.LUserData
 }
 
 var clientFuncs = map[string]lua.LGFunction{
-	"address":     l_client_address,
-	"state":       l_client_state,
-	"connect":     l_client_connect,
-	"poll":        l_client_poll,
-	"close":       l_client_close,
-	"enable":      l_client_enable,
-	"subscribe":   l_client_subscribe,
-	"unsubscribe": l_client_unsubscribe,
-	"wildcard":    l_client_wildcard,
-	"send":        l_client_send,
+	"address": l_client_address,
+	"state":   l_client_state,
+	"connect": l_client_connect,
+	"poll":    l_client_poll,
+	"close":   l_client_close,
+	"enable":  l_client_enable,
+	"send":    l_client_send,
+}
+
+type EventError struct {
+	err string
+}
+
+func (evt EventError) handle(l *lua.LState, val lua.LValue) {
+	l.SetField(val, "type", lua.LString("error"))
+	l.SetField(val, "error", lua.LString(evt.err))
+}
+
+type EventDisconnect struct {
+	client *Client
+}
+
+func (evt EventDisconnect) handle(l *lua.LState, val lua.LValue) {
+	l.SetField(val, "type", lua.LString("disconnect"))
+	evt.client.state = csDisconnected
 }
 
 func getClient(l *lua.LState) *Client {
@@ -65,17 +79,6 @@ func getClients(l *lua.LState) []*Client {
 	return clients
 }
 
-func getStrings(l *lua.LState) []string {
-	n := l.GetTop()
-
-	strs := make([]string, 0, n-1)
-	for i := 2; i <= n; i++ {
-		strs = append(strs, l.CheckString(i))
-	}
-
-	return strs
-}
-
 func (client *Client) closeConn() {
 	client.mu.Lock()
 	defer client.mu.Unlock()
@@ -90,9 +93,8 @@ func l_client(l *lua.LState) int {
 
 	client.address = l.CheckString(1)
 	client.state = csNew
-	client.wildcard = false
-	client.subscribed = map[string]struct{}{}
 	client.components = map[string]Component{}
+	client.table = l.NewTable()
 	client.userdata = l.NewUserData()
 	client.userdata.Value = client
 	l.SetMetatable(client.userdata, l.GetTypeMetatable("hydra.client"))
@@ -105,7 +107,9 @@ func l_client_index(l *lua.LState) int {
 	client := getClient(l)
 	key := l.CheckString(2)
 
-	if fun, exists := clientFuncs[key]; exists {
+	if key == "data" {
+		l.Push(client.table)
+	} else if fun, exists := clientFuncs[key]; exists {
 		l.Push(l.NewFunction(fun))
 	} else if component, exists := client.components[key]; exists {
 		l.Push(component.push())
@@ -154,7 +158,7 @@ func l_client_connect(l *lua.LState) int {
 
 	client.state = csConnected
 	client.conn = mt.Connect(conn)
-	client.queue = make(chan *mt.Pkt, 1024)
+	client.queue = make(chan Event, 1024)
 
 	go func() {
 		for {
@@ -165,15 +169,12 @@ func l_client_connect(l *lua.LState) int {
 				for _, component := range client.components {
 					component.process(&pkt)
 				}
-				_, subscribed := client.subscribed[string(convert.PushPktType(&pkt))]
 				client.mu.Unlock()
-
-				if subscribed || client.wildcard {
-					client.queue <- &pkt
-				}
 			} else if errors.Is(err, net.ErrClosed) {
-				close(client.queue)
+				client.queue <- EventDisconnect{client: client}
 				return
+			} else {
+				client.queue <- EventError{err: err.Error()}
 			}
 		}
 	}()
@@ -189,11 +190,7 @@ func l_client_connect(l *lua.LState) int {
 
 func l_client_poll(l *lua.LState) int {
 	client := getClient(l)
-	_, pkt, timeout := doPoll(l, []*Client{client})
-
-	l.Push(convert.PushPkt(l, pkt))
-	l.Push(lua.LBool(timeout))
-	return 2
+	return doPoll(l, []*Client{client})
 }
 
 func l_client_close(l *lua.LState) int {
@@ -204,16 +201,22 @@ func l_client_close(l *lua.LState) int {
 
 func l_client_enable(l *lua.LState) int {
 	client := getClient(l)
+	n := l.GetTop()
+
 	client.mu.Lock()
 	defer client.mu.Unlock()
 
-	for _, compname := range getStrings(l) {
+	for i := 2; i <= n; i++ {
+		compname := l.CheckString(i)
+
 		if component, exists := client.components[compname]; !exists {
 			switch compname {
 			case "auth":
 				component = &Auth{}
 			case "map":
 				component = &Map{}
+			case "pkts":
+				component = &Pkts{}
 			default:
 				panic("invalid component: " + compname)
 			}
@@ -223,36 +226,6 @@ func l_client_enable(l *lua.LState) int {
 		}
 	}
 
-	return 0
-}
-
-func l_client_subscribe(l *lua.LState) int {
-	client := getClient(l)
-	client.mu.Lock()
-	defer client.mu.Unlock()
-
-	for _, pkt := range getStrings(l) {
-		client.subscribed[pkt] = struct{}{}
-	}
-
-	return 0
-}
-
-func l_client_unsubscribe(l *lua.LState) int {
-	client := getClient(l)
-	client.mu.Lock()
-	defer client.mu.Unlock()
-
-	for _, pkt := range getStrings(l) {
-		delete(client.subscribed, pkt)
-	}
-
-	return 0
-}
-
-func l_client_wildcard(l *lua.LState) int {
-	client := getClient(l)
-	client.wildcard = l.ToBool(2)
 	return 0
 }
 
@@ -271,7 +244,7 @@ func l_client_send(l *lua.LState) int {
 
 	if client.state == csConnected {
 		ack, err := client.conn.SendCmd(cmd)
-		if err != nil {
+		if err != nil && !errors.Is(err, net.ErrClosed) {
 			panic(err)
 		}
 

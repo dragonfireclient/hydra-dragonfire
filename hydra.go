@@ -2,7 +2,6 @@ package main
 
 import (
 	_ "embed"
-	"github.com/dragonfireclient/hydra-dragonfire/convert"
 	"github.com/yuin/gopher-lua"
 	"os"
 	"os/signal"
@@ -11,7 +10,7 @@ import (
 )
 
 var lastTime = time.Now()
-var canceled = false
+var signalChannel chan os.Signal
 
 var serializeVer uint8 = 28
 var protoVer uint16 = 39
@@ -40,17 +39,10 @@ var builtinFiles = []string{
 }
 
 var hydraFuncs = map[string]lua.LGFunction{
-	"client":   l_client,
-	"dtime":    l_dtime,
-	"canceled": l_canceled,
-	"poll":     l_poll,
-	"close":    l_close,
-}
-
-func signalChannel() chan os.Signal {
-	sig := make(chan os.Signal, 1)
-	signal.Notify(sig, os.Interrupt, syscall.SIGTERM, syscall.SIGHUP)
-	return sig
+	"client": l_client,
+	"dtime":  l_dtime,
+	"poll":   l_poll,
+	"close":  l_close,
 }
 
 func l_dtime(l *lua.LState) int {
@@ -59,21 +51,8 @@ func l_dtime(l *lua.LState) int {
 	return 1
 }
 
-func l_canceled(l *lua.LState) int {
-	l.Push(lua.LBool(canceled))
-	return 1
-}
-
 func l_poll(l *lua.LState) int {
-	client, pkt, timeout := doPoll(l, getClients(l))
-	l.Push(convert.PushPkt(l, pkt))
-	if client == nil {
-		l.Push(lua.LNil)
-	} else {
-		l.Push(client.userdata)
-	}
-	l.Push(lua.LBool(timeout))
-	return 3
+	return doPoll(l, getClients(l))
 }
 
 func l_close(l *lua.LState) int {
@@ -89,12 +68,10 @@ func main() {
 		panic("missing filename")
 	}
 
-	go func() {
-		<-signalChannel()
-		canceled = true
-	}()
+	signalChannel = make(chan os.Signal, 1)
+	signal.Notify(signalChannel, os.Interrupt, syscall.SIGTERM, syscall.SIGHUP)
 
-	l := lua.NewState(lua.Options{IncludeGoStackTrace: true})
+	l := lua.NewState()
 	defer l.Close()
 
 	arg := l.NewTable()
@@ -112,6 +89,7 @@ func main() {
 	l.SetField(l.NewTypeMetatable("hydra.auth"), "__index", l.SetFuncs(l.NewTable(), authFuncs))
 	l.SetField(l.NewTypeMetatable("hydra.client"), "__index", l.NewFunction(l_client_index))
 	l.SetField(l.NewTypeMetatable("hydra.map"), "__index", l.SetFuncs(l.NewTable(), mapFuncs))
+	l.SetField(l.NewTypeMetatable("hydra.pkts"), "__index", l.SetFuncs(l.NewTable(), pktsFuncs))
 
 	for _, str := range builtinFiles {
 		if err := l.DoString(str); err != nil {
