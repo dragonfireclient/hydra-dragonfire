@@ -12,6 +12,7 @@ The `hydra` table contains functions necessary to handle connections.
 ## Functions
 
 - `hydra.client(address)`: Returns a new client. Address must be a string. For client functions, see [client.md](client.md).
+- `hydra.map()`: Return a new map. For map functions, see [map.md](map.md).
 - `hydra.dtime()`: Utility function that turns the elapsed time in seconds (floating point) since it was last called (or since program start).
 - `hydra.poll(clients, [timeout])`: Polls events from all clients in `clients` (table). For behavior and return value, see [poll.md](poll.md).
 - `hydra.close(clients)`: Closes all clients in `clients` (table) that are currently connected. See `client:close()` in [client.md](client.md) for more info.

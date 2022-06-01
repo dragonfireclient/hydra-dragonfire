@@ -1,8 +1,8 @@
-# Packet Handler Component
+# Packets Component
 Source code: [pkts.go](../pkts.go)
 
-The packet handler component allows you to handle packets yourself. It fires events in the form of `{ type = "pkt", client = ..., pkt_type = "...", pkt_data = { ... } }``` when subscribed packets are received.
-For available packets, see [client_pkts.md](client_pkts.md). By default, not packets are packets subscribed.
+The packets component allows you to handle packets yourself. It fires events in the form of `{ type = "pkt", client = ..., pkt_type = "...", pkt_data = { ... } }``` when subscribed packets are received.
+For available packets, see [client_pkts.md](client_pkts.md). By default, no packets are packets subscribed.
 
 ## Wildcard mode
 

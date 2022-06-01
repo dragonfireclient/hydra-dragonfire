@@ -40,6 +40,7 @@ var builtinFiles = []string{
 
 var hydraFuncs = map[string]lua.LGFunction{
 	"client": l_client,
+	"map": l_map,
 	"dtime":  l_dtime,
 	"poll":   l_poll,
 	"close":  l_close,
@@ -86,10 +87,12 @@ func main() {
 	l.SetField(hydra, "proto_ver", lua.LNumber(protoVer))
 	l.SetGlobal("hydra", hydra)
 
-	l.SetField(l.NewTypeMetatable("hydra.auth"), "__index", l.SetFuncs(l.NewTable(), authFuncs))
 	l.SetField(l.NewTypeMetatable("hydra.client"), "__index", l.NewFunction(l_client_index))
 	l.SetField(l.NewTypeMetatable("hydra.map"), "__index", l.SetFuncs(l.NewTable(), mapFuncs))
-	l.SetField(l.NewTypeMetatable("hydra.pkts"), "__index", l.SetFuncs(l.NewTable(), pktsFuncs))
+
+	l.SetField(l.NewTypeMetatable("hydra.comp.auth"), "__index", l.SetFuncs(l.NewTable(), compAuthFuncs))
+	l.SetField(l.NewTypeMetatable("hydra.comp.map"), "__index", l.SetFuncs(l.NewTable(), compMapFuncs))
+	l.SetField(l.NewTypeMetatable("hydra.comp.pkts"), "__index", l.SetFuncs(l.NewTable(), compPktsFuncs))
 
 	for _, str := range builtinFiles {
 		if err := l.DoString(str); err != nil {

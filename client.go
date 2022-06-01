@@ -166,8 +166,8 @@ func l_client_connect(l *lua.LState) int {
 
 			if err == nil {
 				client.mu.Lock()
-				for _, component := range client.components {
-					component.process(&pkt)
+				for _, comp := range client.components {
+					comp.process(&pkt)
 				}
 				client.mu.Unlock()
 			} else if errors.Is(err, net.ErrClosed) {
@@ -180,8 +180,8 @@ func l_client_connect(l *lua.LState) int {
 	}()
 
 	client.mu.Lock()
-	for _, component := range client.components {
-		component.connect()
+	for _, comp := range client.components {
+		comp.connect()
 	}
 	client.mu.Unlock()
 
@@ -207,22 +207,22 @@ func l_client_enable(l *lua.LState) int {
 	defer client.mu.Unlock()
 
 	for i := 2; i <= n; i++ {
-		compname := l.CheckString(i)
+		name := l.CheckString(i)
 
-		if component, exists := client.components[compname]; !exists {
-			switch compname {
+		if comp, exists := client.components[name]; !exists {
+			switch name {
 			case "auth":
-				component = &Auth{}
+				comp = &CompAuth{}
 			case "map":
-				component = &Map{}
+				comp = &CompMap{}
 			case "pkts":
-				component = &Pkts{}
+				comp = &CompPkts{}
 			default:
-				panic("invalid component: " + compname)
+				panic("invalid component: " + name)
 			}
 
-			client.components[compname] = component
-			component.create(client, l)
+			client.components[name] = comp
+			comp.create(client, l)
 		}
 	}
 

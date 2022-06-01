@@ -18,6 +18,6 @@ After being disconnect, a client cannot be reconnected.
 
 Enabled components can be accessed by using `self.<component name>`.
 
-- `self.pkt`: Allows you to handle selected packets yourself. Most scripts use this. See [pkts.md](pkts.md).
-- `self.auth`: Handles authentication. Recommended for the vast majority of scripts. See [auth.md](auth.md).
-- `self.map`: Stores MapBlocks received from server. See [map.md](map.md).
+- `self.pkt`: Allows you to handle selected packets yourself. Most scripts use this. See [comp_pkts.md](comp_pkts.md).
+- `self.auth`: Handles authentication. Recommended for the vast majority of scripts. See [comp_auth.md](comp_auth.md).
+- `self.map`: Stores MapBlocks received from server. See [comp_map.md](comp_map.md).

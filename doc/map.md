@@ -1,12 +1,9 @@
-# Map Component
+# Map interface
 Source code: [map.go](../map.go)
 
-Map handles the `blk_data` and `node_metas_changed` packets.
-Map may send `got_blks`, `deleted_blks` packets.
+A map stores mapblocks received from server. To be of any use, a map needs to be added to one or more clients. See [comp_map.md](comp_map.md) and [client.md](client.md).
 
 ## Functions
-
-`self:clear()`: Forget all blocks.
 
 `self:block(blkpos)`: Return the `map_blk` at `blkpos` as found in the `blk_data` packet (See [client_pkts.md](client_pkts.md)). `nil` if block is not present.
 
