@@ -1,4 +1,4 @@
-# Map interface
+# Map Reference
 Source code: [map.go](../map.go)
 
 A map stores mapblocks received from server. To be of any use, a map needs to be added to one or more clients. See [comp_map.md](comp_map.md) and [client.md](client.md).

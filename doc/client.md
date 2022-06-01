@@ -1,4 +1,4 @@
-# Client interface
+# Client Reference
 Source code: [client.go](../client.go)
 
 A client represents a connection state. A client may not yet be connected, or it may be already disconnected.
