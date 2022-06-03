@@ -7,7 +7,7 @@ import (
 
 type CompMap struct {
 	client   *Client
-	mapdata *Map
+	mapdata  *Map
 	userdata *lua.LUserData
 }
 

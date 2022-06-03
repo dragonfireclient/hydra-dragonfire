@@ -40,7 +40,7 @@ var builtinFiles = []string{
 
 var hydraFuncs = map[string]lua.LGFunction{
 	"client": l_client,
-	"map": l_map,
+	"map":    l_map,
 	"dtime":  l_dtime,
 	"poll":   l_poll,
 	"close":  l_close,
