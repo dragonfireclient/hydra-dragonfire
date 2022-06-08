@@ -35,7 +35,7 @@ function mt_vec2:__len()
 	return math.sqrt(self:dot(self))
 end
 
-function mt_vec2:__equ(other)
+function mt_vec2:__eq(other)
 	return type(other) == "table" and self.x == other.x and self.y == other.y
 end
 
@@ -104,7 +104,7 @@ function mt_vec3:__len()
 	return math.sqrt(self:dot(self))
 end
 
-function mt_vec3:__equ(other)
+function mt_vec3:__eq(other)
 	return type(other) == "table" and self.x == other.x and self.y == other.y and self.z == other.z
 end
 
