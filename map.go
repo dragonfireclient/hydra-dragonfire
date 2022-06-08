@@ -41,23 +41,21 @@ func newMap(l *lua.LState) *Map {
 func (mp *Map) process(client *Client, pkt *mt.Pkt) {
 	switch cmd := pkt.Cmd.(type) {
 	case *mt.ToCltBlkData:
-		go func() {
-			mp.mu.Lock()
-			defer mp.mu.Unlock()
+		mp.mu.Lock()
+		defer mp.mu.Unlock()
 
-			blk := &MapBlk{}
-			blk.data = &cmd.Blk
+		blk := &MapBlk{}
+		blk.data = &cmd.Blk
 
-			if mp.pathfind {
-				if oldblk, ok := mp.blocks[cmd.Blkpos]; ok {
-					pathRemoveBlock(oldblk)
-				}
-
-				pathAddBlock(mp, blk, cmd.Blkpos)
+		if mp.pathfind {
+			if oldblk, ok := mp.blocks[cmd.Blkpos]; ok {
+				pathRemoveBlock(oldblk)
 			}
 
-			mp.blocks[cmd.Blkpos] = blk
-		}()
+			pathAddBlock(mp, blk, cmd.Blkpos)
+		}
+
+		mp.blocks[cmd.Blkpos] = blk
 
 		client.conn.SendCmd(&mt.ToSrvGotBlks{Blks: [][3]int16{cmd.Blkpos}})
 	}
