@@ -2,8 +2,8 @@ package main
 
 import (
 	"errors"
-	"github.com/dragonfireclient/mt"
 	"github.com/dragonfireclient/hydra-dragonfire/convert"
+	"github.com/dragonfireclient/mt"
 	"github.com/yuin/gopher-lua"
 	"net"
 	"sync"
@@ -25,12 +25,13 @@ type Component interface {
 }
 
 type Client struct {
-	mu         sync.Mutex
 	address    string
 	state      clientState
 	conn       mt.Peer
+	muConn     sync.Mutex
 	queue      chan Event
 	components map[string]Component
+	muComp     sync.Mutex
 	table      *lua.LTable
 	userdata   *lua.LUserData
 }
@@ -80,8 +81,8 @@ func getClients(l *lua.LState) []*Client {
 }
 
 func (client *Client) closeConn() {
-	client.mu.Lock()
-	defer client.mu.Unlock()
+	client.muConn.Lock()
+	defer client.muConn.Unlock()
 
 	if client.state == csConnected {
 		client.conn.Close()
@@ -165,11 +166,11 @@ func l_client_connect(l *lua.LState) int {
 			pkt, err := client.conn.Recv()
 
 			if err == nil {
-				client.mu.Lock()
+				client.muComp.Lock()
 				for _, comp := range client.components {
 					comp.process(&pkt)
 				}
-				client.mu.Unlock()
+				client.muComp.Unlock()
 			} else if errors.Is(err, net.ErrClosed) {
 				client.queue <- EventDisconnect{client: client}
 				return
@@ -179,11 +180,11 @@ func l_client_connect(l *lua.LState) int {
 		}
 	}()
 
-	client.mu.Lock()
+	client.muComp.Lock()
 	for _, comp := range client.components {
 		comp.connect()
 	}
-	client.mu.Unlock()
+	client.muComp.Unlock()
 
 	return 0
 }
@@ -203,8 +204,8 @@ func l_client_enable(l *lua.LState) int {
 	client := getClient(l)
 	n := l.GetTop()
 
-	client.mu.Lock()
-	defer client.mu.Unlock()
+	client.muComp.Lock()
+	defer client.muComp.Unlock()
 
 	for i := 2; i <= n; i++ {
 		name := l.CheckString(i)
@@ -232,15 +233,15 @@ func l_client_enable(l *lua.LState) int {
 func l_client_send(l *lua.LState) int {
 	client := getClient(l)
 
+	client.muConn.Lock()
+	defer client.muConn.Unlock()
+
 	if client.state != csConnected {
 		panic("not connected")
 	}
 
 	cmd := convert.ReadCmd(l)
 	doAck := l.ToBool(4)
-
-	client.mu.Lock()
-	defer client.mu.Unlock()
 
 	if client.state == csConnected {
 		ack, err := client.conn.SendCmd(cmd)

@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/dragonfireclient/mt"
 	"github.com/beefsack/go-astar"
 	"github.com/dragonfireclient/hydra-dragonfire/convert"
+	"github.com/dragonfireclient/mt"
 	"github.com/yuin/gopher-lua"
 	"math"
 	"sync"
