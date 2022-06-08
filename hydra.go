@@ -12,8 +12,8 @@ import (
 var lastTime = time.Now()
 var signalChannel chan os.Signal
 
-var serializeVer uint8 = 28
-var protoVer uint16 = 39
+var serializeVer uint8 = 29
+var protoVer uint16 = 40
 
 //go:embed builtin/luax/init.lua
 var builtinLuaX string

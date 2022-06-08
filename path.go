@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/anon55555/mt"
+	"github.com/dragonfireclient/mt"
 	"github.com/beefsack/go-astar"
 	"github.com/dragonfireclient/hydra-dragonfire/convert"
 	"github.com/yuin/gopher-lua"

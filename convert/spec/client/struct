@@ -22,6 +22,7 @@ hud
 	vec2 size
 	number z_index
 	string text_2
+	hud_style_flags style
 map_blk
 	map_blk_flags flags
 	number lit_from

@@ -28,7 +28,6 @@ end
 
 local tolua = {
 	string = "lua.LString(string(VAL))",
-	fixed_string = "lua.LString(string(VAL[:]))",
 	boolean = "lua.LBool(VAL)",
 	number = "lua.LNumber(VAL)",
 	vec2 = "PushVec2(l, [2]lua.LNumber{lua.LNumber(VAL[0]), lua.LNumber(VAL[1])})",
@@ -102,7 +101,7 @@ f:write([[
 package convert
 
 import (
-	"github.com/anon55555/mt"
+	"github.com/dragonfireclient/mt"
 	"github.com/yuin/gopher-lua"
 )
 

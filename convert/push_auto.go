@@ -2,7 +2,7 @@
 package convert
 
 import (
-	"github.com/anon55555/mt"
+	"github.com/dragonfireclient/mt"
 	"github.com/yuin/gopher-lua"
 )
 
@@ -207,6 +207,14 @@ func PushHUDFlags(l *lua.LState, val mt.HUDFlags) lua.LValue {
 	return tbl
 }
 
+func PushHUDStyleFlags(l *lua.LState, val mt.HUDStyleFlags) lua.LValue {
+	tbl := l.NewTable()
+	l.SetField(tbl, "bold", lua.LBool(val&mt.StyleBold != 0))
+	l.SetField(tbl, "italic", lua.LBool(val&mt.StyleItalic != 0))
+	l.SetField(tbl, "mono", lua.LBool(val&mt.StyleMono != 0))
+	return tbl
+}
+
 func PushMapBlkFlags(l *lua.LState, val mt.MapBlkFlags) lua.LValue {
 	tbl := l.NewTable()
 	l.SetField(tbl, "is_underground", lua.LBool(val&mt.BlkIsUnderground != 0))
@@ -227,6 +235,7 @@ func PushHUD(l *lua.LState, val mt.HUD) lua.LValue {
 	l.SetField(tbl, "pos", PushVec2(l, [2]lua.LNumber{lua.LNumber(val.Pos[0]), lua.LNumber(val.Pos[1])}))
 	l.SetField(tbl, "scale", PushVec2(l, [2]lua.LNumber{lua.LNumber(val.Scale[0]), lua.LNumber(val.Scale[1])}))
 	l.SetField(tbl, "size", PushVec2(l, [2]lua.LNumber{lua.LNumber(val.Size[0]), lua.LNumber(val.Size[1])}))
+	l.SetField(tbl, "style", PushHUDStyleFlags(l, val.Style))
 	l.SetField(tbl, "text", lua.LString(string(val.Text)))
 	l.SetField(tbl, "text_2", lua.LString(string(val.Text2)))
 	l.SetField(tbl, "type", PushHUDType(l, val.Type))
@@ -474,6 +483,9 @@ func PushPkt(l *lua.LState, pkt *mt.Pkt) lua.LValue {
 		if val.Field == mt.HUDSize {
 			l.SetField(tbl, "size", PushVec2(l, [2]lua.LNumber{lua.LNumber(val.Size[0]), lua.LNumber(val.Size[1])}))
 		}
+		if val.Field == mt.HUDStyle {
+			l.SetField(tbl, "style", PushHUDStyleFlags(l, val.Style))
+		}
 		if val.Field == mt.HUDText {
 			l.SetField(tbl, "text", lua.LString(string(val.Text)))
 		}
@@ -556,9 +568,9 @@ func PushPkt(l *lua.LState, pkt *mt.Pkt) lua.LValue {
 		l.SetField(tbl, "walk", PushBox1(l, [2]lua.LNumber{lua.LNumber(val.Walk[0]), lua.LNumber(val.Walk[1])}))
 		l.SetField(tbl, "walk_dig", PushBox1(l, [2]lua.LNumber{lua.LNumber(val.WalkDig[0]), lua.LNumber(val.WalkDig[1])}))
 	case *mt.ToCltMediaPush:
-		l.SetField(tbl, "data", lua.LString(string(val.Data)))
+		l.SetField(tbl, "callback_token", lua.LNumber(val.CallbackToken))
 		l.SetField(tbl, "filename", lua.LString(string(val.Filename)))
-		l.SetField(tbl, "sha1", lua.LString(string(val.SHA1[:])))
+		l.SetField(tbl, "raw_hash", lua.LString(string(val.RawHash)))
 		l.SetField(tbl, "should_cache", lua.LBool(val.ShouldCache))
 	case *mt.ToCltModChanMsg:
 		l.SetField(tbl, "channel", lua.LString(string(val.Channel)))

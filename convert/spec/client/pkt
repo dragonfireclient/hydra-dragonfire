@@ -37,10 +37,10 @@ csm_restriction_flags
 add_player_vel
 	vec3 vel
 media_push
-	fixed_string sha1
+	string raw_hash
 	string filename
+	number callback_token
 	boolean should_cache
-	string data
 chat_msg
 	chat_msg_type type
 	string sender
@@ -166,6 +166,7 @@ change_hud
 	{size} val.Field == mt.HUDSize
 	{z_index} val.Field == mt.HUDZIndex
 	{text_2} val.Field == mt.HUDText2
+	{style} val.Field == mt.HUDStyle
 	vec2 pos
 	string name
 	string text
@@ -178,6 +179,7 @@ change_hud
 	vec2 size
 	number z_index
 	string text_2
+	hud_style_flags style
 hud_flags
 	hud_flags flags
 	hud_flags mask

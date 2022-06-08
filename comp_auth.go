@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/HimbeerserverDE/srp"
-	"github.com/anon55555/mt"
+	"github.com/dragonfireclient/mt"
 	"github.com/dragonfireclient/hydra-dragonfire/convert"
 	"github.com/yuin/gopher-lua"
 	"strings"

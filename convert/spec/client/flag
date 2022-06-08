@@ -23,3 +23,8 @@ map_blk_flags
 	day_night_diff
 	light_expired
 	not_generated
+hud_style_flags
+	prefix Style
+	bold
+	italic
+	mono

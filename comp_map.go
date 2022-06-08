@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/anon55555/mt"
+	"github.com/dragonfireclient/mt"
 	"github.com/yuin/gopher-lua"
 )
 
