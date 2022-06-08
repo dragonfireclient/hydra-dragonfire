@@ -105,7 +105,7 @@ func (comp *CompAuth) process(pkt *mt.Pkt) {
 			return
 		}
 
-		if cmd.SerializeVer != 28 {
+		if cmd.SerializeVer != serializeVer {
 			comp.fail("unsupported serialize version")
 			return
 		}
