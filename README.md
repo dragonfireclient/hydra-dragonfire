@@ -1,7 +1,7 @@
 # Hydra
 <img src="https://cdn8.picryl.com/photo/2016/05/14/hydra-from-bl-royal-12-c-xix-f-13-b31e4a-1024.jpg" width="500" />
 
-Lua bindings for client side minetest protocol - written in Go, using [anon5's mt package](https://github.com/anon55555/mt).
+Lua bindings for client side minetest protocol - written in Go, using [a fork](https://github.com/dragonfireclient/mt) of [anon5's mt package](https://github.com/anon55555/mt).
 Capable of deserializing ToClt packets and serializing ToSrv packets.
 
 Main use case are bot clients. Multiple clients can easily be spawend and polled from one script - hence the name "Hydra".
