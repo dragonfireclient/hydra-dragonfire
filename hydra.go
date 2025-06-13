@@ -5,7 +5,6 @@ import (
 	"github.com/yuin/gopher-lua"
 	"os"
 	"os/signal"
-	"runtime/pprof"
 	"syscall"
 	"time"
 )
@@ -73,14 +72,7 @@ func main() {
 	signalChannel = make(chan os.Signal, 1)
 	signal.Notify(signalChannel, os.Interrupt, syscall.SIGTERM, syscall.SIGHUP)
 
-	go func() {
-		ch := make(chan os.Signal, 1)
-		signal.Notify(ch, syscall.SIGUSR1)
-		for {
-			<-ch
-			pprof.Lookup("goroutine").WriteTo(os.Stdout, 1)
-		}
-	}()
+	backtrace_listen()
 
 	l := lua.NewState()
 	defer l.Close()
